@@ -204,7 +204,8 @@ public class Utils {
       // Get size of line identifier
       String line;
       while((line = lineReader.nextLine()) != null) {
-         builder.append(line.substring(numberOfDigitsForLines));
+         line = parseLine(line);
+         builder.append(line);
          builder.append("\n");
       }
 
@@ -324,6 +325,13 @@ return null;
        */
    }
 
+    private static String parseLine(String line) {
+      line = line.substring(numberOfDigitsForLines);
+      line = line.replace("&lt;", "<");
+      line = line.replace("&gt;", ">");
+      return line;
+   }
+
    public final static String HTML_EXTENSION = ".html";
    public final static String HTML_SOURCE_SUFFIX = "source"+HTML_EXTENSION;
    public final static String HEADER_1_PREFIX = "<h1>";
@@ -334,6 +342,8 @@ return null;
    public final static String SPAN_TAG_END = "</span>";
    public final static String TAG_FINALIZER = ">";
    public final static int numberOfDigitsForLines = 5;
+
+
 
 
 
