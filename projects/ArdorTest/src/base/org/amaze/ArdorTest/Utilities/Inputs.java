@@ -47,12 +47,13 @@ import com.google.common.base.Predicates;
  */
 public class Inputs {
 
-   public static void registerInputTriggers(final BaseApp baseApp) {
+   public static void registerInputTriggers(final BaseApp app) {
+      final BaseScene baseApp = app.getScene();
       LogicalLayer _logicalLayer = baseApp.getLogicalLayer();
       final NativeCanvas _canvas = baseApp.getNativeCanvas();
-      final LightState _lightState = baseApp.getScene().getLightState();
-      final Node _root = baseApp.getRoot();
-      final BaseScene dataScene = baseApp.getScene();
+      final LightState _lightState = baseApp.getLightState();
+      final Node _root = baseApp.getRootNode();
+      final BaseScene dataScene = baseApp;
       final MouseManager _mouseManager = baseApp.getMouseManager();
 
       // check if this example worries about input at all
@@ -62,7 +63,7 @@ public class Inputs {
 
 
 
-      baseApp.initFpsControl();
+      app.initFpsControl();
 
         _logicalLayer.registerTrigger(new InputTrigger(new MouseButtonClickedCondition(MouseButton.RIGHT),
                 new TriggerAction() {
@@ -74,13 +75,13 @@ public class Inputs {
                         final Ray3 pickRay = new Ray3();
                         _canvas.getCanvasRenderer().getCamera().getPickRay(pos, false, pickRay);
                         Vector2.releaseTempInstance(pos);
-                        RayUtils.doPick(pickRay, baseApp.getRoot());
+                        RayUtils.doPick(pickRay, baseApp.getRootNode());
                     }
                 }, "pickTrigger"));
 
         _logicalLayer.registerTrigger(new InputTrigger(new KeyPressedCondition(Key.ESCAPE), new TriggerAction() {
             public void perform(final Canvas source, final TwoInputStates inputState, final double tpf) {
-                baseApp.exit();
+                app.exit();
             }
         }));
 
@@ -100,7 +101,7 @@ public class Inputs {
 
         _logicalLayer.registerTrigger(new InputTrigger(new KeyPressedCondition(Key.T), new TriggerAction() {
             public void perform(final Canvas source, final TwoInputStates inputState, final double tpf) {
-               WireframeState _wireframeState  = baseApp.getScene().getWireframeState();
+               WireframeState _wireframeState  = baseApp.getWireframeState();
                _wireframeState.setEnabled(!_wireframeState.isEnabled());
                 // Either an update or a markDirty is needed here since we did not touch the affected spatial directly.
                 _root.markDirty(DirtyType.RenderState);

@@ -104,8 +104,8 @@ public class BaseUpdater implements Updater {
    }
 
    public void update(ReadOnlyTimer timer) {
-      NativeCanvas _canvas = baseApp.getNativeCanvas();
-      Node _root = baseApp.getRoot();
+      NativeCanvas _canvas = baseApp.getScene().getNativeCanvas();
+      Node _root = baseApp.getScene().getRootNode();
       
       if (_canvas.isClosing()) {
             baseApp.exit();
@@ -130,7 +130,7 @@ public class BaseUpdater implements Updater {
    }
 
    private void updateLogicalLayer(final ReadOnlyTimer timer) {
-      LogicalLayer _logicalLayer = baseApp.getLogicalLayer();
+      LogicalLayer _logicalLayer = baseApp.getScene().getLogicalLayer();
 
         // check and execute any input triggers, if we are concerned with input
         if (_logicalLayer != null) {

@@ -17,36 +17,16 @@
 
 package org.amaze.ArdorTest.Utilities;
 
-import com.ardor3d.example.PropertiesGameSettings;
 import com.ardor3d.framework.DisplaySettings;
 import com.ardor3d.framework.FrameHandler;
 import com.ardor3d.framework.NativeCanvas;
-import com.ardor3d.framework.Scene;
 import com.ardor3d.framework.Updater;
-import com.ardor3d.framework.jogl.JoglCanvas;
-import com.ardor3d.framework.jogl.JoglCanvasRenderer;
-import com.ardor3d.framework.lwjgl.LwjglCanvas;
-import com.ardor3d.framework.lwjgl.LwjglCanvasRenderer;
 import com.ardor3d.input.MouseManager;
 import com.ardor3d.input.PhysicalLayer;
-import com.ardor3d.input.awt.AwtFocusWrapper;
-import com.ardor3d.input.awt.AwtKeyboardWrapper;
-import com.ardor3d.input.awt.AwtMouseManager;
-import com.ardor3d.input.awt.AwtMouseWrapper;
 import com.ardor3d.input.control.FirstPersonControl;
-import com.ardor3d.input.logical.DummyControllerWrapper;
 import com.ardor3d.input.logical.LogicalLayer;
-import com.ardor3d.input.lwjgl.LwjglControllerWrapper;
-import com.ardor3d.input.lwjgl.LwjglKeyboardWrapper;
-import com.ardor3d.input.lwjgl.LwjglMouseManager;
-import com.ardor3d.input.lwjgl.LwjglMouseWrapper;
 import com.ardor3d.math.Vector3;
-import com.ardor3d.renderer.TextureRendererFactory;
-import com.ardor3d.renderer.jogl.JoglTextureRendererProvider;
-import com.ardor3d.renderer.lwjgl.LwjglTextureRendererProvider;
 import com.ardor3d.scenegraph.Node;
-import com.ardor3d.util.Timer;
-import org.ancora.SharedLibrary.LoggingUtils;
 
 /**
  *
@@ -62,40 +42,6 @@ public class BaseApp {
    }
 
 
-   
-   /**
-    * Builds a BaseScene from a PropertiesGameSettings preferences
-    * 
-    * @param preferences
-    * @return
-    */
-
-//   public static BaseApp newBaseScene(PropertiesGameSettings prefs, ExtendedApp app) {
-      // Create object to start filling
-      //BaseApp baseScene = new BaseApp();
-
-     // baseScene.dataScene = BaseScene.newBaseScene(prefs);
-
-   //   baseScene.updaterClass = new BaseUpdater(baseScene);
-      //baseScene._exit = false;
-
-/*
-      Timer timer = new Timer();
-      baseScene.frameHandler = new FrameHandler(timer);
-*/
-
-   //   baseScene.logicalLayer.registerInput(baseScene.nativeCanvas,
-   //           baseScene.physicalLayer);
-
-      // Register our example as an updater.
-    //  baseScene.frameHandler.addUpdater(baseScene.updaterClass);
-
-      // register our native canvas
-     // baseScene.frameHandler.addCanvas(baseScene.dataScene.getNativeCanvas());
-
-//      return baseScene;
-   //}
-
 
    public void initFpsControl() {
       firstPersonControl = FirstPersonControl.setupTriggers(dataScene.getLogicalLayer(), _worldUp, true);
@@ -105,7 +51,7 @@ public class BaseApp {
     public void exit() {
         _exit = true;
     }
-   
+ /*
    public DisplaySettings getDisplaySettings() {
       return dataScene.getDisplaySettings();
    }
@@ -133,7 +79,7 @@ public class BaseApp {
    public Node getRoot() {
       return dataScene.getRootNode();
    }
-
+*/
    public FirstPersonControl getFirstPersonControl() {
       return firstPersonControl;
    }
@@ -147,9 +93,9 @@ public class BaseApp {
    }
 
 
-   protected FrameHandler frameHandler;
-   protected BaseScene dataScene;
-   protected  Updater updaterClass;
+   //protected FrameHandler frameHandler;
+   private BaseScene dataScene;
+   //protected  Updater updaterClass;
    protected  FirstPersonControl firstPersonControl;
 
    private volatile boolean _exit;

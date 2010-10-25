@@ -21,7 +21,6 @@ import com.ardor3d.framework.CanvasRenderer;
 import com.ardor3d.framework.FrameHandler;
 import com.ardor3d.framework.NativeCanvas;
 import com.ardor3d.framework.Updater;
-import com.ardor3d.math.Vector3;
 import com.ardor3d.renderer.Renderer;
 import com.ardor3d.util.ContextGarbageCollector;
 import com.ardor3d.util.Timer;
@@ -59,7 +58,7 @@ public void run() {
             }
 
             // grab the graphics context so cleanup will work out.
-           NativeCanvas nativeCanvas = baseApp.getNativeCanvas();
+           NativeCanvas nativeCanvas = baseApp.getScene().getNativeCanvas();
             final CanvasRenderer cr = nativeCanvas.getCanvasRenderer();
             cr.makeCurrentContext();
             quit(nativeCanvas.getCanvasRenderer().getRenderer(), nativeCanvas);
