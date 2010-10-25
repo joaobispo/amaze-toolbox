@@ -17,13 +17,19 @@
 
 package org.amaze.ArdorTest.Utilities;
 
+import com.ardor3d.example.PropertiesGameSettings;
+import com.ardor3d.framework.DisplaySettings;
 import com.ardor3d.framework.NativeCanvas;
 import com.ardor3d.framework.Scene;
 import com.ardor3d.image.TextureStoreFormat;
 import com.ardor3d.image.util.ScreenShotImageExporter;
+import com.ardor3d.input.MouseManager;
+import com.ardor3d.input.PhysicalLayer;
+import com.ardor3d.input.logical.LogicalLayer;
 import com.ardor3d.intersection.PickResults;
 import com.ardor3d.math.Ray3;
 import com.ardor3d.renderer.Renderer;
+import com.ardor3d.renderer.TextureRendererFactory;
 import com.ardor3d.renderer.state.LightState;
 import com.ardor3d.renderer.state.WireframeState;
 import com.ardor3d.scenegraph.Node;
@@ -32,6 +38,7 @@ import com.ardor3d.util.GameTaskQueue;
 import com.ardor3d.util.GameTaskQueueManager;
 import com.ardor3d.util.geom.Debugger;
 import com.ardor3d.util.screen.ScreenExporter;
+import org.ancora.SharedLibrary.LoggingUtils;
 
 /**
  *
@@ -39,23 +46,52 @@ import com.ardor3d.util.screen.ScreenExporter;
  */
 public class BaseScene implements Scene {
 
-   public BaseScene(BaseApp baseApp) {
+   public BaseScene() {
       _root = new Node();
-
-      _lightState = new LightState();
-      _lightState.setEnabled(true);
-      
+      _lightState = new LightState(); 
       _wireframeState = new WireframeState();
-      _wireframeState.setEnabled(false);
-
       _screenShotExp = new ScreenShotImageExporter();
-      this.baseApp = baseApp;
+      logicalLayer = new LogicalLayer();
    }
 
+   public void initRenderStates() {
+      _lightState.setEnabled(true);
+      _root.setRenderState(_lightState);
+      
+      _wireframeState.setEnabled(false);
+      _root.setRenderState(_wireframeState);
+   }
 
+   public void initScene(PropertiesGameSettings prefs) {
+      // Initialize DisplaySettings
+      displaySettings = Settings.newDisplaySetting(prefs);
+
+      // Initialize OpenGl bindings
+      OpenGlWrapper wrapperData = OpenGlWrapper.newData(prefs.getRenderer(),
+              displaySettings, this, TextureRendererFactory.INSTANCE);
+      if(wrapperData == null) {
+         LoggingUtils.getLogger().
+                 warning("Could not initialize scene.");
+         return;
+      }
+
+      mouseManager = wrapperData.mouseManager;
+      physicalLayer = wrapperData.physicalLayer;
+      nativeCanvas = wrapperData.nativeCanvas;
+
+      logicalLayer.registerInput(nativeCanvas, physicalLayer);
+   }
+
+   public static BaseScene newBaseScene(PropertiesGameSettings prefs) {
+      BaseScene baseScene = new BaseScene();
+      baseScene.initRenderStates();
+      baseScene.initScene(prefs);
+
+      return baseScene;
+   }
 
    public boolean renderUnto(Renderer renderer) {
-      NativeCanvas _canvas = baseApp.getNativeCanvas();
+      NativeCanvas _canvas = this.nativeCanvas;
 // Execute renderQueue item
         GameTaskQueueManager.getManager(_canvas.getCanvasRenderer().getRenderContext()).getQueue(GameTaskQueue.RENDER)
                 .execute(renderer);
@@ -82,12 +118,10 @@ public class BaseScene implements Scene {
    }
 
    private void renderExample(final Renderer renderer) {
-      Node _root = baseApp.getRoot();
       renderer.draw(_root);
    }
 
    private void renderDebug(final Renderer renderer) {
-      Node _root = baseApp.getRoot();
       if (_showBounds) {
          Debugger.drawBounds(_root, renderer, true);
       }
@@ -141,7 +175,10 @@ public class BaseScene implements Scene {
       return _root;
    }
 
-   
+
+   NativeCanvas getNativeCanvas() {
+      return nativeCanvas;
+   }
 
    public void switchShowDepth() {
       _showDepth = !_showDepth;
@@ -163,7 +200,30 @@ public class BaseScene implements Scene {
    private Node _root;
    private LightState _lightState;
    private WireframeState _wireframeState;
+   private DisplaySettings displaySettings;
+   private MouseManager mouseManager;
+   private PhysicalLayer physicalLayer;
+   private LogicalLayer logicalLayer;
+   private NativeCanvas nativeCanvas;
+
    private ScreenShotImageExporter _screenShotExp;
 
-   private BaseApp baseApp;
+   //private BaseApp baseApp;
+
+   DisplaySettings getDisplaySettings() {
+      return displaySettings;
+   }
+
+   MouseManager getMouseManager() {
+      return mouseManager;
+   }
+
+   PhysicalLayer getPhysicalLayer() {
+      return physicalLayer;
+   }
+
+   LogicalLayer getLogicalLayer() {
+      return logicalLayer;
+   }
+
 }

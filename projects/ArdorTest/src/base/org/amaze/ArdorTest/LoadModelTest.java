@@ -18,10 +18,13 @@
 package org.amaze.ArdorTest;
 
 import com.ardor3d.example.PropertiesGameSettings;
+import com.ardor3d.framework.Updater;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.amaze.ArdorTest.Utilities.BaseRunner;
 import org.amaze.ArdorTest.Utilities.BaseApp;
+import org.amaze.ArdorTest.Utilities.BaseScene;
+import org.amaze.ArdorTest.Utilities.BaseUpdater;
 import org.amaze.ArdorTest.Utilities.ExtendedApp;
 import org.amaze.ArdorTest.Utilities.Settings;
 import org.ancora.SharedLibrary.LoggingUtils;
@@ -59,9 +62,11 @@ public class LoadModelTest implements ExtendedApp {
       final PropertiesGameSettings prefs = Settings.getPreferencesWithWindow(gameProperties, this.getClass());
 
       // Get BaseScene
-      BaseApp baseScene = BaseApp.newBaseScene(prefs, this);
+      BaseScene baseScene = BaseScene.newBaseScene(prefs);
+      BaseApp baseApp = new BaseApp(baseScene);
+      Updater updater = new BaseUpdater(baseApp);
       ExecutorService executor = Executors.newSingleThreadExecutor();
-      executor.submit(new BaseRunner(baseScene));
+      executor.submit(new BaseRunner(baseApp, updater));
    }
 
    public void initApp() {

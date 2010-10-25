@@ -20,9 +20,11 @@ package org.amaze.ArdorTest.Utilities;
 import com.ardor3d.framework.CanvasRenderer;
 import com.ardor3d.framework.FrameHandler;
 import com.ardor3d.framework.NativeCanvas;
+import com.ardor3d.framework.Updater;
 import com.ardor3d.math.Vector3;
 import com.ardor3d.renderer.Renderer;
 import com.ardor3d.util.ContextGarbageCollector;
+import com.ardor3d.util.Timer;
 
 /**
  *
@@ -30,27 +32,34 @@ import com.ardor3d.util.ContextGarbageCollector;
  */
 public class BaseRunner implements Runnable {
 
-   public BaseRunner(BaseApp baseScene) {
-      this.baseScene = baseScene;
+   public BaseRunner(BaseApp baseScene, Updater updater) {
+      this.baseApp = baseScene;
+      frameHandler = new FrameHandler(new Timer());
+
+      // Register our example as an updater.
+      frameHandler.addUpdater(updater);
+
+      // register our native canvas
+      frameHandler.addCanvas(baseScene.getScene().getNativeCanvas());
    }
 
 
 
-   private final BaseApp baseScene;
+   private final BaseApp baseApp;
+   private FrameHandler frameHandler;
    //private volatile boolean _exit = false;
 
 public void run() {
         try {
-           FrameHandler frameHandler = baseScene.getFrameHandler();
            frameHandler.init();
 
-            while (!baseScene.isExit()) {
+            while (!baseApp.isExit()) {
                 frameHandler.updateFrame();
                 Thread.yield();
             }
 
             // grab the graphics context so cleanup will work out.
-           NativeCanvas nativeCanvas = baseScene.getNativeCanvas();
+           NativeCanvas nativeCanvas = baseApp.getNativeCanvas();
             final CanvasRenderer cr = nativeCanvas.getCanvasRenderer();
             cr.makeCurrentContext();
             quit(nativeCanvas.getCanvasRenderer().getRenderer(), nativeCanvas);

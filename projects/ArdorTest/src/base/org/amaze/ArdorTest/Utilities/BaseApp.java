@@ -56,7 +56,9 @@ public class BaseApp {
 
 
 
-   public BaseApp() {
+   public BaseApp(BaseScene baseScene) {
+      dataScene = baseScene;
+      _exit = false;
    }
 
 
@@ -67,71 +69,36 @@ public class BaseApp {
     * @param preferences
     * @return
     */
-   public static BaseApp newBaseScene(PropertiesGameSettings prefs, ExtendedApp app) {
+
+//   public static BaseApp newBaseScene(PropertiesGameSettings prefs, ExtendedApp app) {
       // Create object to start filling
-      BaseApp baseScene = new BaseApp();
+      //BaseApp baseScene = new BaseApp();
 
-      baseScene.dataScene = new BaseScene(baseScene);
-      //baseScene._root = new Node();
-      baseScene.addRenderStatesToRoot(baseScene.dataScene.getRootNode(), baseScene.dataScene);
-      baseScene.app = app;
-      baseScene.updaterClass = new UpdateClass(baseScene);
-      baseScene._exit = false;
+     // baseScene.dataScene = BaseScene.newBaseScene(prefs);
 
+   //   baseScene.updaterClass = new BaseUpdater(baseScene);
+      //baseScene._exit = false;
 
-      baseScene.logicalLayer = new LogicalLayer();
+/*
       Timer timer = new Timer();
       baseScene.frameHandler = new FrameHandler(timer);
-      
+*/
 
-      baseScene.displaySettings = Settings.newDisplaySetting(prefs);
-
-      if (LWJGL_STRING.equalsIgnoreCase(prefs.getRenderer())) {
-         configLWJGL(baseScene, baseScene.displaySettings, baseScene.dataScene);
-      } else if (JOGL_STRING.equalsIgnoreCase(prefs.getRenderer())) {
-         configJOGL(baseScene, baseScene.displaySettings, baseScene.dataScene);
-      } else {
-         LoggingUtils.getLogger().
-                 warning("Renderer not supported: '" + prefs.getRenderer() + "'");
-         return null;
-      }
-
-      baseScene.logicalLayer.registerInput(baseScene.nativeCanvas,
-              baseScene.physicalLayer);
+   //   baseScene.logicalLayer.registerInput(baseScene.nativeCanvas,
+   //           baseScene.physicalLayer);
 
       // Register our example as an updater.
-      baseScene.frameHandler.addUpdater(baseScene.updaterClass);
+    //  baseScene.frameHandler.addUpdater(baseScene.updaterClass);
 
       // register our native canvas
-      baseScene.frameHandler.addCanvas(baseScene.nativeCanvas);
+     // baseScene.frameHandler.addCanvas(baseScene.dataScene.getNativeCanvas());
 
-      return baseScene;
-   }
+//      return baseScene;
+   //}
 
-   private static void configLWJGL(BaseApp baseScene, DisplaySettings displaySettings,
-           Scene dataScene) {
-      final LwjglCanvasRenderer canvasRenderer = new LwjglCanvasRenderer(dataScene);
-      baseScene.nativeCanvas = new LwjglCanvas(canvasRenderer, displaySettings);
-      baseScene.physicalLayer = new PhysicalLayer(new LwjglKeyboardWrapper(), new LwjglMouseWrapper(),
-              new LwjglControllerWrapper(), (LwjglCanvas) baseScene.nativeCanvas);
-      baseScene.mouseManager = new LwjglMouseManager();
-      TextureRendererFactory.INSTANCE.setProvider(new LwjglTextureRendererProvider());
-   }
-
-
-   private static void configJOGL(BaseApp baseScene, DisplaySettings displaySettings,
-           Scene dataScene) {
-      final JoglCanvasRenderer canvasRenderer = new JoglCanvasRenderer(dataScene);
-      baseScene.nativeCanvas = new JoglCanvas(canvasRenderer, displaySettings);
-      final JoglCanvas canvas = (JoglCanvas) baseScene.nativeCanvas;
-      baseScene.mouseManager = new AwtMouseManager(canvas);
-      baseScene.physicalLayer = new PhysicalLayer(new AwtKeyboardWrapper(canvas), new AwtMouseWrapper(canvas,
-              baseScene.mouseManager), DummyControllerWrapper.INSTANCE, new AwtFocusWrapper(canvas));
-      TextureRendererFactory.INSTANCE.setProvider(new JoglTextureRendererProvider());
-   }
 
    public void initFpsControl() {
-      firstPersonControl = FirstPersonControl.setupTriggers(logicalLayer, _worldUp, true);
+      firstPersonControl = FirstPersonControl.setupTriggers(dataScene.getLogicalLayer(), _worldUp, true);
    }
 
 
@@ -140,7 +107,7 @@ public class BaseApp {
     }
    
    public DisplaySettings getDisplaySettings() {
-      return displaySettings;
+      return dataScene.getDisplaySettings();
    }
 
    public FrameHandler getFrameHandler() {
@@ -148,35 +115,23 @@ public class BaseApp {
    }
 
    public LogicalLayer getLogicalLayer() {
-      return logicalLayer;
+      return dataScene.getLogicalLayer();
    }
 
    public MouseManager getMouseManager() {
-      return mouseManager;
+      return dataScene.getMouseManager();
    }
 
    public NativeCanvas getNativeCanvas() {
-      return nativeCanvas;
+      return dataScene.getNativeCanvas();
    }
 
    public PhysicalLayer getPhysicalLayer() {
-      return physicalLayer;
+      return dataScene.getPhysicalLayer();
    }
-
-   /*
-   public LightState getLightState() {
-      return _lightState;
-   }
-    *
-    */
-
-   
+  
    public Node getRoot() {
       return dataScene.getRootNode();
-   }
-
-   public ExtendedApp getExtendedApp() {
-      return app;
    }
 
    public FirstPersonControl getFirstPersonControl() {
@@ -187,35 +142,19 @@ public class BaseApp {
       return _exit;
    }
 
-   public BaseScene getDataScene() {
+   public BaseScene getScene() {
       return dataScene;
    }
 
-   private void addRenderStatesToRoot(Node node, BaseScene dataScene) {
-      node.setRenderState(dataScene.getLightState());
-      node.setRenderState(dataScene.getWireframeState());
-   }
 
-
-
-   private DisplaySettings displaySettings;
-   private NativeCanvas nativeCanvas;
-   private PhysicalLayer physicalLayer;
-   private MouseManager mouseManager;
-   private LogicalLayer logicalLayer;
-   private FrameHandler frameHandler;
-//   private LightState _lightState;
-//   private WireframeState _wireframeState;
-   private BaseScene dataScene;
-   private Updater updaterClass;
-   //private Node _root;
-   private ExtendedApp app;
-   private FirstPersonControl firstPersonControl;
+   protected FrameHandler frameHandler;
+   protected BaseScene dataScene;
+   protected  Updater updaterClass;
+   protected  FirstPersonControl firstPersonControl;
 
    private volatile boolean _exit;
 
-   private static final String LWJGL_STRING = "LWJGL";
-   private static final String JOGL_STRING = "JOGL";
+
    private static final Vector3 _worldUp = new Vector3(0, 1, 0);
 
 

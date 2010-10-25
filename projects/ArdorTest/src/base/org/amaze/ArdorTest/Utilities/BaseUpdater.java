@@ -35,9 +35,9 @@ import org.ancora.SharedLibrary.LoggingUtils;
  *
  * @author Joao Bispo
  */
-public class UpdateClass implements Updater {
+public class BaseUpdater implements Updater {
 
-   UpdateClass(BaseApp baseApp) {
+   public BaseUpdater(BaseApp baseApp) {
       this.baseApp = baseApp;
    }
 

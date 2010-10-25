@@ -50,9 +50,9 @@ public class Inputs {
    public static void registerInputTriggers(final BaseApp baseApp) {
       LogicalLayer _logicalLayer = baseApp.getLogicalLayer();
       final NativeCanvas _canvas = baseApp.getNativeCanvas();
-      final LightState _lightState = baseApp.getDataScene().getLightState();
+      final LightState _lightState = baseApp.getScene().getLightState();
       final Node _root = baseApp.getRoot();
-      final BaseScene dataScene = baseApp.getDataScene();
+      final BaseScene dataScene = baseApp.getScene();
       final MouseManager _mouseManager = baseApp.getMouseManager();
 
       // check if this example worries about input at all
@@ -100,7 +100,7 @@ public class Inputs {
 
         _logicalLayer.registerTrigger(new InputTrigger(new KeyPressedCondition(Key.T), new TriggerAction() {
             public void perform(final Canvas source, final TwoInputStates inputState, final double tpf) {
-               WireframeState _wireframeState  = baseApp.getDataScene().getWireframeState();
+               WireframeState _wireframeState  = baseApp.getScene().getWireframeState();
                _wireframeState.setEnabled(!_wireframeState.isEnabled());
                 // Either an update or a markDirty is needed here since we did not touch the affected spatial directly.
                 _root.markDirty(DirtyType.RenderState);

@@ -20,8 +20,6 @@ package org.amaze.ArdorTest.Utilities;
 import com.ardor3d.example.PropertiesDialog;
 import com.ardor3d.example.PropertiesGameSettings;
 import com.ardor3d.framework.DisplaySettings;
-import com.ardor3d.framework.NativeCanvas;
-import com.ardor3d.framework.lwjgl.LwjglCanvasRenderer;
 import com.ardor3d.util.resource.ResourceLocatorTool;
 import java.awt.EventQueue;
 import java.net.URL;
@@ -145,28 +143,10 @@ public class Settings {
 
    }
    
-   /*
+   
 
-   public static NativeCanvas newNativeCanvas(PropertiesGameSettings prefs) {
-if (LWJGL_STRING.equalsIgnoreCase(prefs.getRenderer())) {
-            final LwjglCanvasRenderer canvasRenderer = new LwjglCanvasRenderer(example);
-            example._canvas = new LwjglCanvas(canvasRenderer, settings);
-            example._physicalLayer = new PhysicalLayer(new LwjglKeyboardWrapper(), new LwjglMouseWrapper(),
-                    new LwjglControllerWrapper(), (LwjglCanvas) example._canvas);
-            example._mouseManager = new LwjglMouseManager();
-            TextureRendererFactory.INSTANCE.setProvider(new LwjglTextureRendererProvider());
-        } else if ("JOGL".equalsIgnoreCase(prefs.getRenderer())) {
-            final JoglCanvasRenderer canvasRenderer = new JoglCanvasRenderer(example);
-            example._canvas = new JoglCanvas(canvasRenderer, settings);
-            final JoglCanvas canvas = (JoglCanvas) example._canvas;
-            example._mouseManager = new AwtMouseManager(canvas);
-            example._physicalLayer = new PhysicalLayer(new AwtKeyboardWrapper(canvas), new AwtMouseWrapper(canvas,
-                    example._mouseManager), DummyControllerWrapper.INSTANCE, new AwtFocusWrapper(canvas));
-            TextureRendererFactory.INSTANCE.setProvider(new JoglTextureRendererProvider());
-        }
-      return null;
-   }
-   */
+
+  
 
    private static boolean useMinAlphaBits = false;
    private static boolean useMinDepthBits = false;
