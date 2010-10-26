@@ -15,34 +15,46 @@
  *  under the License.
  */
 
-package org.amaze.ArdorTest.Utilities;
+package org.amaze.ArdorTest.BaseImplementations;
 
 import com.ardor3d.framework.NativeCanvas;
 import com.ardor3d.framework.Updater;
+import com.ardor3d.image.util.AWTImageLoader;
+import com.ardor3d.input.control.FirstPersonControl;
 import com.ardor3d.input.logical.LogicalLayer;
+import com.ardor3d.light.PointLight;
+import com.ardor3d.math.ColorRGBA;
+import com.ardor3d.math.Vector3;
 import com.ardor3d.renderer.ContextCapabilities;
 import com.ardor3d.renderer.ContextManager;
+import com.ardor3d.renderer.queue.RenderBucketType;
+import com.ardor3d.renderer.state.ZBufferState;
 import com.ardor3d.scenegraph.Node;
 import com.ardor3d.util.Constants;
 import com.ardor3d.util.GameTaskQueue;
 import com.ardor3d.util.GameTaskQueueManager;
 import com.ardor3d.util.ReadOnlyTimer;
+import com.ardor3d.util.resource.ResourceLocatorTool;
+import com.ardor3d.util.resource.SimpleResourceLocator;
 import com.ardor3d.util.stat.StatCollector;
+import java.net.URISyntaxException;
 import java.util.logging.Logger;
 import org.amaze.ArdorTest.DataObjects.BaseData;
+import org.amaze.ArdorTest.Utilities.InputUtils;
 import org.ancora.SharedLibrary.LoggingUtils;
 
 /**
  *
  * @author Joao Bispo
  */
-public class BaseUpdater implements Updater {
+public abstract class BaseUpdater implements Updater {
 
    public BaseUpdater(BaseData baseData) {
       this.baseData = baseData;
    }
 
    // TODO: commented code
+   @Override
    public void init() {
       final ContextCapabilities caps = ContextManager.getCurrentContext().getCapabilities();
       Logger logger = LoggingUtils.getLogger(this);
@@ -51,59 +63,69 @@ public class BaseUpdater implements Updater {
       logger.info("Display Version: " + caps.getDisplayVersion());
       logger.info("Shading Language Version: " + caps.getShadingLanguageVersion());
 
+//      System.out.println("Input Bef:"+baseData.basicInput.firstPersonControl);
+
+//      baseData.basicInput.firstPersonControl = FirstPersonControl.setupTriggers(
+//              baseData.basicInput.logicalLayer, InputUtils._worldUp, true);
+
+//      System.out.println("Input Aft:"+baseData.basicInput.firstPersonControl);
+
       registerInputs();
 
         //Inputs.registerInputTriggers(baseApp);
-/*
+
+      // Image Loading?
         AWTImageLoader.registerLoader();
 
+        // Resources?
         try {
-            SimpleResourceLocator srl = new SimpleResourceLocator(ResourceLocatorTool.getClassPathResource(
-                    ExampleBase.class, "com/ardor3d/example/media/"));
-            ResourceLocatorTool.addResourceLocator(ResourceLocatorTool.TYPE_TEXTURE, srl);
-            srl = new SimpleResourceLocator(ResourceLocatorTool.getClassPathResource(ExampleBase.class,
-                    "com/ardor3d/example/media/models/"));
+           SimpleResourceLocator srl;
+           // srl = new SimpleResourceLocator(ResourceLocatorTool.getClassPathResource(
+           //         this.getClass(), "com/ardor3d/example/media/"));
+          //  ResourceLocatorTool.addResourceLocator(ResourceLocatorTool.TYPE_TEXTURE, srl);
+            srl = new SimpleResourceLocator(ResourceLocatorTool.getClassPathResource(this.getClass(),
+                   MODELS_LOCATION));
+                   // "com/ardor3d/example/media/models/"));
             ResourceLocatorTool.addResourceLocator(ResourceLocatorTool.TYPE_MODEL, srl);
         } catch (final URISyntaxException ex) {
             ex.printStackTrace();
         }
-*/
+
         /**
          * Create a ZBuffer to display pixels closest to the camera above farther ones.
          */
-/*
+
         final ZBufferState buf = new ZBufferState();
         buf.setEnabled(true);
         buf.setFunction(ZBufferState.TestFunction.LessThanOrEqualTo);
-        _root.setRenderState(buf);
-*/
+        baseData.screenData._root.setRenderState(buf);
+
         // ---- LIGHTS
         /** Set up a basic, default light. */
- /*
+ 
         final PointLight light = new PointLight();
         light.setDiffuse(new ColorRGBA(0.75f, 0.75f, 0.75f, 0.75f));
         light.setAmbient(new ColorRGBA(0.5f, 0.5f, 0.5f, 1.0f));
         light.setLocation(new Vector3(100, 100, 100));
         light.setEnabled(true);
-*/
+
         /** Attach the light to a lightState and the lightState to rootNode. */
- /*
-                _lightState = new LightState();
-        _lightState.setEnabled(true);
-        _lightState.attach(light);
-        _root.setRenderState(_lightState);
+ 
+                //_lightState = new LightState();
+        //_lightState.setEnabled(true);
+        baseData.renderStateData._lightState.attach(light);
+        //_root.setRenderState(_lightState);
 
-        _wireframeState = new WireframeState();
-        _wireframeState.setEnabled(false);
-        _root.setRenderState(_wireframeState);
-
+        //_wireframeState = new WireframeState();
+        //_wireframeState.setEnabled(false);
+        //_root.setRenderState(_wireframeState);
+         Node _root = baseData.screenData._root;
         _root.getSceneHints().setRenderBucketType(RenderBucketType.Opaque);
 
         initExample();
 
         _root.updateGeometricState(0);
-  * 
-  */
+  
    }
 
    /**
@@ -119,6 +141,7 @@ public class BaseUpdater implements Updater {
    }
 
 
+   @Override
    public void update(ReadOnlyTimer timer) {
       NativeCanvas _canvas = baseData.screenData.nativeCanvas;
       Node _root = baseData.screenData._root;
@@ -164,11 +187,20 @@ public class BaseUpdater implements Updater {
     *
     * @param timer
     */
-    protected void updateExample(final ReadOnlyTimer timer) {
-    // does nothing
-    }
+    protected abstract void updateExample(final ReadOnlyTimer timer);
 
-   private BaseData baseData;
+
+   /**
+    * Can be overriden in an ExtendedUpdater class.
+    *
+    * @param timer
+    */
+   protected abstract void initExample();
+
+   protected BaseData baseData;
+
+   public static final String MODELS_LOCATION = "org/amaze/ArdorTest/models/";
+   public static final String TEXTURES_LOCATION = "org/amaze/ArdorTest/models/";
 
 
 }

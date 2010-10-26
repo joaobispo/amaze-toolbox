@@ -20,6 +20,7 @@ package org.amaze.ArdorTest;
 import com.ardor3d.example.PropertiesGameSettings;
 import com.ardor3d.framework.Canvas;
 import com.ardor3d.framework.Updater;
+import com.ardor3d.input.control.FirstPersonControl;
 import com.ardor3d.input.logical.AnyKeyCondition;
 import com.ardor3d.input.logical.InputTrigger;
 import com.ardor3d.input.logical.LogicalLayer;
@@ -29,17 +30,19 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.amaze.ArdorTest.BaseImplementations.BaseScene;
 import org.amaze.ArdorTest.DataObjects.BaseData;
-import org.amaze.ArdorTest.Utilities.BaseRunner;
-import org.amaze.ArdorTest.Utilities.BaseUpdater;
+import org.amaze.ArdorTest.BaseImplementations.BaseRunner;
+import org.amaze.ArdorTest.BaseImplementations.BaseUpdater;
 import org.amaze.ArdorTest.Utilities.ExtendedApp;
+import org.amaze.ArdorTest.Utilities.InputUtils;
 import org.amaze.ArdorTest.Utilities.SettingsUtils;
+import org.amaze.ArdorTests.Test1.Test1Updater;
 import org.ancora.SharedLibrary.LoggingUtils;
 
 /**
  *
  * @author Ancora Group <ancora.codigo@gmail.com>
  */
-public class LoadModelTest implements ExtendedApp {
+public class LoadModelTest  {
 
    public LoadModelTest() {
    }
@@ -70,12 +73,13 @@ public class LoadModelTest implements ExtendedApp {
       BaseScene baseScene = new BaseScene();
       BaseData baseData = SettingsUtils.newDataObjects(prefs, baseScene);
 
-      changeInput(baseData);
+      //changeInput(baseData);
       // Get BaseScene
       //BaseScene baseScene = BaseScene.newBaseScene(prefs);
       //BaseApp baseApp = new BaseApp(baseScene);
 
-      Updater updater = new BaseUpdater(baseData);
+      //Updater updater = new BaseUpdater(baseData);
+      Updater updater = new Test1Updater(baseData);
       ExecutorService executor = Executors.newSingleThreadExecutor();
       executor.submit(new BaseRunner(updater, baseData));
    }

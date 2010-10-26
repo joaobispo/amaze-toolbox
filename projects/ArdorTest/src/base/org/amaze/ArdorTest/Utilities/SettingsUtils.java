@@ -20,6 +20,7 @@ package org.amaze.ArdorTest.Utilities;
 import com.ardor3d.example.PropertiesDialog;
 import com.ardor3d.example.PropertiesGameSettings;
 import com.ardor3d.framework.DisplaySettings;
+import com.ardor3d.input.control.FirstPersonControl;
 import com.ardor3d.renderer.TextureRendererFactory;
 import com.ardor3d.util.resource.ResourceLocatorTool;
 import java.awt.EventQueue;
@@ -175,7 +176,8 @@ public class SettingsUtils {
       ScreenData screenData = ScreenData.newScreenData(displaySettings, wrapperData, scene);
 
       BasicInput basicInput = BasicInput.newBasicInput(screenData, wrapperData);
-
+      //basicInput.firstPersonControl = FirstPersonControl.setupTriggers(
+      //        basicInput.logicalLayer, InputUtils._worldUp, true);
       RenderStateData renderStateData = RenderStateData.newRenderState(screenData._root);
 
       return new BaseData(screenData, basicInput, renderStateData);

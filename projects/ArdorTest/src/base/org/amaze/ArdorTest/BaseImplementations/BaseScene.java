@@ -34,20 +34,16 @@ import org.amaze.ArdorTest.DataObjects.ScreenData;
 import org.ancora.SharedLibrary.LoggingUtils;
 
 /**
- * Encapsulates
+ * Implements a simple Scene which has information about the data on the screen.
+ * Draws the image on the screen.
  *
  * @author Joao Bispo
  */
 public class BaseScene implements Scene {
 
    public BaseScene() {
-      //_root = new Node();
-      //_lightState = new LightState();
-      //_wireframeState = new WireframeState();
       _screenShotExp = new ScreenShotImageExporter();
-      //logicalLayer = new LogicalLayer();
 
-      //_exit = false;
       this.screenData = null;
    }
 
@@ -55,49 +51,8 @@ public class BaseScene implements Scene {
       this.screenData = screenData;
    }
 
-   /*
-   public void initRenderStates() {
-      _lightState.setEnabled(true);
-      _root.setRenderState(_lightState);
-      
-      _wireframeState.setEnabled(false);
-      _root.setRenderState(_wireframeState);
-   }
-    *
-    */
 
-   //public void initScene(PropertiesGameSettings prefs) {
-     /*
-      // Initialize DisplaySettings
-      displaySettings = SettingsUtils.newDisplaySetting(prefs);
-
-      // Initialize OpenGl bindings
-      OpenGlWrapper wrapperData = OpenGlWrapper.newData(prefs.getRenderer(),
-              displaySettings, this, TextureRendererFactory.INSTANCE);
-      if(wrapperData == null) {
-         LoggingUtils.getLogger().
-                 warning("Could not initialize scene.");
-         return;
-      }
-*/
-      //mouseManager = wrapperData.mouseManager;
-      //physicalLayer = wrapperData.physicalLayer;
-      //nativeCanvas = wrapperData.nativeCanvas;
-
-      //logicalLayer.registerInput(nativeCanvas, physicalLayer);
-  // }
-
-   /*
-   public static BaseScene newBaseScene(PropertiesGameSettings prefs) {
-      BaseScene baseScene = new BaseScene();
-      baseScene.initRenderStates();
-      baseScene.initScene(prefs);
-
-      return baseScene;
-   }
-    *
-    */
-
+   @Override
    public boolean renderUnto(Renderer renderer) {
       if(screenData == null) {
          LoggingUtils.getLogger().
@@ -137,7 +92,6 @@ public class BaseScene implements Scene {
                  warning("Cannot render: ScreenData not registered.");
          return;
       }
-      //renderer.draw(_root);
       renderer.draw(screenData._root);
    }
 
@@ -163,6 +117,7 @@ public class BaseScene implements Scene {
       }
    }
 
+   @Override
    public PickResults doPick(Ray3 pickRay) {
       throw new UnsupportedOperationException("Not supported yet.");
    }
@@ -187,30 +142,6 @@ public class BaseScene implements Scene {
       this._doShot = _doShot;
    }
 
-   
-/*
-   public LightState getLightState() {
-      return _lightState;
-   }
-
-   public WireframeState getWireframeState() {
-      return _wireframeState;
-   }
-
-   public Node getRootNode() {
-      return _root;
-   }
-
-
-   NativeCanvas getNativeCanvas() {
-      return nativeCanvas;
-   }
-
-   public boolean isExit() {
-      return _exit;
-   }
-*/
-   
 
    public void switchShowDepth() {
       _showDepth = !_showDepth;
@@ -224,52 +155,13 @@ public class BaseScene implements Scene {
       _showNormals = !_showNormals;
    }
 
-   /**
-    * Changes the exit flag to true.
-    */
-   /*
-   public void setExit() {
-        _exit = true;
-    }
-    *
-    */
-
+  
    private boolean _showBounds = false;
    private boolean _showNormals = false;
    private boolean _showDepth = false;
    private boolean _doShot = false;
 
-   //private Node _root;
-   //private LightState _lightState;
-   //private WireframeState _wireframeState;
-   //private DisplaySettings displaySettings;
-   //private MouseManager mouseManager;
-   //private PhysicalLayer physicalLayer;
-   //private LogicalLayer logicalLayer;
-   //private NativeCanvas nativeCanvas;
-
    private ScreenShotImageExporter _screenShotExp;
 
-   //private volatile boolean _exit;
-
-   //private BaseApp baseApp;
-
-   /*
-   DisplaySettings getDisplaySettings() {
-      return displaySettings;
-   }
-
-   MouseManager getMouseManager() {
-      return mouseManager;
-   }
-
-   PhysicalLayer getPhysicalLayer() {
-      return physicalLayer;
-   }
-
-   LogicalLayer getLogicalLayer() {
-      return logicalLayer;
-   }
-*/
    private ScreenData screenData;
 }

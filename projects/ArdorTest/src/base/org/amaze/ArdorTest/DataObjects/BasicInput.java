@@ -52,5 +52,5 @@ public class BasicInput {
    public final MouseManager mouseManager;
    public final PhysicalLayer physicalLayer;
    public final LogicalLayer logicalLayer;
-   public final FirstPersonControl firstPersonControl;
+   public  FirstPersonControl firstPersonControl;
 }

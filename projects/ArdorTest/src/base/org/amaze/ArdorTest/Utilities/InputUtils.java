@@ -176,5 +176,5 @@ public class InputUtils {
         }));
    }
 
-   private static final Vector3 _worldUp = new Vector3(0, 1, 0);
+   public static final Vector3 _worldUp = new Vector3(0, 1, 0);
 }

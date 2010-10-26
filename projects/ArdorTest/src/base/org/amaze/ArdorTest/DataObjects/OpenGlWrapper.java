@@ -37,6 +37,10 @@ import com.ardor3d.input.lwjgl.LwjglMouseWrapper;
 import com.ardor3d.renderer.TextureRendererFactory;
 import com.ardor3d.renderer.jogl.JoglTextureRendererProvider;
 import com.ardor3d.renderer.lwjgl.LwjglTextureRendererProvider;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Logger;
 import org.ancora.SharedLibrary.LoggingUtils;
 
 /**
@@ -59,6 +63,25 @@ public class OpenGlWrapper {
 
    public static OpenGlWrapper configLWJGL(DisplaySettings displaySettings,
            Scene dataScene, TextureRendererFactory textureRenderer) {
+      // Check if library is present
+      List<String> unfoundFiles = new ArrayList<String>();
+      for(String filename : LWJGL_FILENAMES) {
+               File file = new File(filename);
+               if(!file.exists()) {
+                  unfoundFiles.add(filename);
+               }
+      }
+      if(unfoundFiles.size() > 0) {
+         Logger logger = LoggingUtils.getLogger();
+         logger.info("The following files are missing:");
+         for(String filename : unfoundFiles) {
+            logger.info(filename);
+         }
+         return null;
+      }
+
+
+
       NativeCanvas nativeCanvas;
       MouseManager mouseManager;
       PhysicalLayer physicalLayer;
@@ -123,4 +146,7 @@ public class OpenGlWrapper {
 
    public static final String LWJGL_STRING = "LWJGL";
    public static final String JOGL_STRING = "JOGL";
+
+   public static final String[] LWJGL_FILENAMES = {"jinput-dx8.dll", "lwjgl.dll",
+   "jinput-raw.dll", "OpenAL32.dll"};
 }

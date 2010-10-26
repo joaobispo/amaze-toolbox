@@ -15,7 +15,7 @@
  *  under the License.
  */
 
-package org.amaze.ArdorTest.Utilities;
+package org.amaze.ArdorTest.BaseImplementations;
 
 import com.ardor3d.framework.CanvasRenderer;
 import com.ardor3d.framework.FrameHandler;
