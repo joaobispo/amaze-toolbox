@@ -31,6 +31,7 @@ import com.ardor3d.util.GameTaskQueueManager;
 import com.ardor3d.util.geom.Debugger;
 import com.ardor3d.util.screen.ScreenExporter;
 import org.amaze.ArdorTest.DataObjects.ScreenData;
+import org.ancora.SharedLibrary.LoggingUtils;
 
 /**
  * Encapsulates
@@ -39,7 +40,7 @@ import org.amaze.ArdorTest.DataObjects.ScreenData;
  */
 public class BaseScene implements Scene {
 
-   public BaseScene(ScreenData screenData) {
+   public BaseScene() {
       //_root = new Node();
       //_lightState = new LightState();
       //_wireframeState = new WireframeState();
@@ -47,6 +48,10 @@ public class BaseScene implements Scene {
       //logicalLayer = new LogicalLayer();
 
       //_exit = false;
+      this.screenData = null;
+   }
+
+   public void registerScreenData(ScreenData screenData) {
       this.screenData = screenData;
    }
 
@@ -94,6 +99,12 @@ public class BaseScene implements Scene {
     */
 
    public boolean renderUnto(Renderer renderer) {
+      if(screenData == null) {
+         LoggingUtils.getLogger().
+                 warning("Cannot render: ScreenData not registered.");
+         return false;
+      }
+
       NativeCanvas _canvas = screenData.nativeCanvas;
 // Execute renderQueue item
         GameTaskQueueManager.getManager(_canvas.getCanvasRenderer().getRenderContext()).getQueue(GameTaskQueue.RENDER)
@@ -121,11 +132,22 @@ public class BaseScene implements Scene {
    }
 
    private void renderExample(final Renderer renderer) {
+      if(screenData == null) {
+         LoggingUtils.getLogger().
+                 warning("Cannot render: ScreenData not registered.");
+         return;
+      }
       //renderer.draw(_root);
       renderer.draw(screenData._root);
    }
 
    private void renderDebug(final Renderer renderer) {
+      if (screenData == null) {
+         LoggingUtils.getLogger().
+                 warning("Cannot render: ScreenData not registered.");
+         return;
+      }
+
       if (_showBounds) {
          Debugger.drawBounds(screenData._root, renderer, true);
       }
@@ -249,5 +271,5 @@ public class BaseScene implements Scene {
       return logicalLayer;
    }
 */
-   private final ScreenData screenData;
+   private ScreenData screenData;
 }

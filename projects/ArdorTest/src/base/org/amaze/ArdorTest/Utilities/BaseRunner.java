@@ -24,6 +24,7 @@ import com.ardor3d.framework.Updater;
 import com.ardor3d.renderer.Renderer;
 import com.ardor3d.util.ContextGarbageCollector;
 import com.ardor3d.util.Timer;
+import org.amaze.ArdorTest.DataObjects.BaseData;
 
 /**
  * Implements the infinite loop of the application.
@@ -32,35 +33,38 @@ import com.ardor3d.util.Timer;
  */
 public class BaseRunner implements Runnable {
 
-   public BaseRunner(Updater updater, NativeCanvas nativeCanvas) {
-      _exit = false;
+   public BaseRunner(Updater updater, BaseData baseData) {
+      //_exit = false;
       frameHandler = new FrameHandler(new Timer());
-      this.nativeCanvas = nativeCanvas;
+      //this.nativeCanvas = nativeCanvas;
+      this.baseData = baseData;
 
       // Register our example as an updater.
       frameHandler.addUpdater(updater);
 
       // register our native canvas
-      frameHandler.addCanvas(nativeCanvas);
+      frameHandler.addCanvas(baseData.screenData.nativeCanvas);
    }
 
 
 
    private final FrameHandler frameHandler;
-   private final NativeCanvas nativeCanvas;
+   private final BaseData baseData;
+   //private final NativeCanvas nativeCanvas;
    //private volatile boolean _exit = false;
 
 public void run() {
         try {
            frameHandler.init();
 
-            while (!_exit) {
+            while (!baseData.isExit()) {
 //            while (!baseScene.isExit()) {
                 frameHandler.updateFrame();
                 Thread.yield();
             }
 
             // grab the graphics context so cleanup will work out.
+           NativeCanvas nativeCanvas = baseData.screenData.nativeCanvas;
             final CanvasRenderer cr = nativeCanvas.getCanvasRenderer();
             cr.makeCurrentContext();
             quit(nativeCanvas.getCanvasRenderer().getRenderer(), nativeCanvas);
@@ -83,11 +87,14 @@ public void run() {
    /**
     * Changes the exit flag to true.
     */
+    /*
    public void exit() {
       _exit = true;
    }
+     *
+     */
 
     /** If true (the default) we will call System.exit on end of demo. */
     public static boolean QUIT_VM_ON_EXIT = true;
-    private volatile boolean _exit;
+    //private volatile boolean _exit;
 }

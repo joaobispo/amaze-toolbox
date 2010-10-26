@@ -29,6 +29,7 @@ import com.ardor3d.util.GameTaskQueueManager;
 import com.ardor3d.util.ReadOnlyTimer;
 import com.ardor3d.util.stat.StatCollector;
 import java.util.logging.Logger;
+import org.amaze.ArdorTest.DataObjects.BaseData;
 import org.ancora.SharedLibrary.LoggingUtils;
 
 /**
@@ -37,8 +38,8 @@ import org.ancora.SharedLibrary.LoggingUtils;
  */
 public class BaseUpdater implements Updater {
 
-   public BaseUpdater(BaseApp baseApp) {
-      this.baseApp = baseApp;
+   public BaseUpdater(BaseData baseData) {
+      this.baseData = baseData;
    }
 
    // TODO: commented code
@@ -49,6 +50,8 @@ public class BaseUpdater implements Updater {
       logger.info("Display Renderer: " + caps.getDisplayRenderer());
       logger.info("Display Version: " + caps.getDisplayVersion());
       logger.info("Shading Language Version: " + caps.getShadingLanguageVersion());
+
+      registerInputs();
 
         //Inputs.registerInputTriggers(baseApp);
 /*
@@ -103,12 +106,25 @@ public class BaseUpdater implements Updater {
   */
    }
 
+   /**
+    * Default registering of inputs.
+    */
+   private void registerInputs() {
+      // check if this example worries about input at all
+      if (baseData.basicInput.logicalLayer == null) {
+         return;
+      }
+
+      InputUtils.initBaseInputs(baseData);
+   }
+
+
    public void update(ReadOnlyTimer timer) {
-      NativeCanvas _canvas = baseApp.getScene().getNativeCanvas();
-      Node _root = baseApp.getScene().getRootNode();
+      NativeCanvas _canvas = baseData.screenData.nativeCanvas;
+      Node _root = baseData.screenData._root;
       
       if (_canvas.isClosing()) {
-            baseApp.getScene().setExit();
+            baseData.setExit(true);
         }
 
         /** update stats, if enabled. */
@@ -129,8 +145,13 @@ public class BaseUpdater implements Updater {
         _root.updateGeometricState(timer.getTimePerFrame(), true);
    }
 
+   /**
+    * Can be overriden in an ExtendedUpdater class.
+    *
+    * @param timer
+    */
    protected void updateLogicalLayer(final ReadOnlyTimer timer) {
-      LogicalLayer _logicalLayer = baseApp.getScene().getLogicalLayer();
+      LogicalLayer _logicalLayer = baseData.basicInput.logicalLayer;
 
         // check and execute any input triggers, if we are concerned with input
         if (_logicalLayer != null) {
@@ -138,9 +159,16 @@ public class BaseUpdater implements Updater {
         }
     }
 
+   /**
+    * Can be overriden in an ExtendedUpdater class.
+    *
+    * @param timer
+    */
     protected void updateExample(final ReadOnlyTimer timer) {
     // does nothing
     }
 
-   private BaseApp baseApp;
+   private BaseData baseData;
+
+
 }

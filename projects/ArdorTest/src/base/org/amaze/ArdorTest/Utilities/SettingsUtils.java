@@ -20,9 +20,7 @@ package org.amaze.ArdorTest.Utilities;
 import com.ardor3d.example.PropertiesDialog;
 import com.ardor3d.example.PropertiesGameSettings;
 import com.ardor3d.framework.DisplaySettings;
-import com.ardor3d.framework.Scene;
 import com.ardor3d.renderer.TextureRendererFactory;
-import com.ardor3d.renderer.state.RenderState;
 import com.ardor3d.util.resource.ResourceLocatorTool;
 import java.awt.EventQueue;
 import java.net.URL;
@@ -30,6 +28,8 @@ import java.util.Stack;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.amaze.ArdorTest.BaseImplementations.BaseScene;
+import org.amaze.ArdorTest.DataObjects.BaseData;
 import org.amaze.ArdorTest.DataObjects.BasicInput;
 import org.amaze.ArdorTest.DataObjects.OpenGlWrapper;
 import org.amaze.ArdorTest.DataObjects.RenderStateData;
@@ -151,18 +151,13 @@ public class SettingsUtils {
    }
 
    /**
-    * Builds and returns an array containing data objects.
+    * Builds and returns a BaseData object.
     *
-    * <p>The array contains the following objects, by this order:
-    * <br>ScreenData screenData = (ScreenData)objects[0];
-    * <br>BasicInput basicInput = (BasicInput)objects[1];
-    * <br>RenderState renderState = (RenderState)objects[2];
     *
     * @param prefs
     * @return
     */
-   public static Object[] newDataObjects(PropertiesGameSettings prefs, Scene scene) {
-      Object[] objects = new Object[3];
+   public static BaseData newDataObjects(PropertiesGameSettings prefs, BaseScene scene) {
 
        // Initialize DisplaySettings
       DisplaySettings displaySettings = SettingsUtils.newDisplaySetting(prefs);
@@ -177,16 +172,13 @@ public class SettingsUtils {
          return null;
       }
 
-      ScreenData screenData = ScreenData.newScreenData(displaySettings, wrapperData);
-      objects[0] = screenData;
+      ScreenData screenData = ScreenData.newScreenData(displaySettings, wrapperData, scene);
 
       BasicInput basicInput = BasicInput.newBasicInput(screenData, wrapperData);
-      objects[1] = basicInput;
 
       RenderStateData renderStateData = RenderStateData.newRenderState(screenData._root);
-      objects[2] = renderStateData;
 
-      return objects;
+      return new BaseData(screenData, basicInput, renderStateData);
    }
 
 

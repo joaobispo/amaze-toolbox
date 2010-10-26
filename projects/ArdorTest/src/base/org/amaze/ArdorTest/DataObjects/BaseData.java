@@ -29,9 +29,20 @@ public class BaseData {
       this.renderStateData = renderStateData;
    }
 
+   public void setExit(boolean _exit) {
+      this._exit = _exit;
+   }
+
+   public boolean isExit() {
+      return _exit;
+   }
+
+   
    
 
    public final ScreenData screenData;
    public final BasicInput basicInput;
    public final RenderStateData renderStateData;
+
+   private volatile boolean _exit;
 }

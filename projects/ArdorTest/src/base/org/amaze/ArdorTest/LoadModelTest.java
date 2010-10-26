@@ -18,15 +18,18 @@
 package org.amaze.ArdorTest;
 
 import com.ardor3d.example.PropertiesGameSettings;
+import com.ardor3d.framework.Canvas;
 import com.ardor3d.framework.Updater;
-import com.ardor3d.renderer.state.RenderState;
+import com.ardor3d.input.logical.AnyKeyCondition;
+import com.ardor3d.input.logical.InputTrigger;
+import com.ardor3d.input.logical.LogicalLayer;
+import com.ardor3d.input.logical.TriggerAction;
+import com.ardor3d.input.logical.TwoInputStates;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import org.amaze.ArdorTest.DataObjects.BasicInput;
-import org.amaze.ArdorTest.DataObjects.ScreenData;
+import org.amaze.ArdorTest.BaseImplementations.BaseScene;
+import org.amaze.ArdorTest.DataObjects.BaseData;
 import org.amaze.ArdorTest.Utilities.BaseRunner;
-import org.amaze.ArdorTest.Utilities.BaseApp;
-import org.amaze.ArdorTest.Utilities.BaseScene;
 import org.amaze.ArdorTest.Utilities.BaseUpdater;
 import org.amaze.ArdorTest.Utilities.ExtendedApp;
 import org.amaze.ArdorTest.Utilities.SettingsUtils;
@@ -65,22 +68,42 @@ public class LoadModelTest implements ExtendedApp {
       final PropertiesGameSettings prefs = SettingsUtils.getPreferencesWithWindow(gameProperties, this.getClass());
 
       BaseScene baseScene = new BaseScene();
-      Object[] objects = SettingsUtils.newDataObjects(prefs, baseScene);
-      ScreenData screenData = (ScreenData) objects[0];
-      BasicInput basicInput = (BasicInput) objects[1];
-      RenderState renderState = (RenderState) objects[2];
+      BaseData baseData = SettingsUtils.newDataObjects(prefs, baseScene);
 
+      changeInput(baseData);
       // Get BaseScene
       //BaseScene baseScene = BaseScene.newBaseScene(prefs);
       //BaseApp baseApp = new BaseApp(baseScene);
 
-      Updater updater = new BaseUpdater(baseApp);
+      Updater updater = new BaseUpdater(baseData);
       ExecutorService executor = Executors.newSingleThreadExecutor();
-      executor.submit(new BaseRunner(baseScene, updater));
+      executor.submit(new BaseRunner(updater, baseData));
    }
 
    public void initApp() {
       throw new UnsupportedOperationException("Not supported yet.");
+   }
+
+   
+   private void changeInput(BaseData baseData) {
+      LogicalLayer _logicalLayer = baseData.basicInput.logicalLayer;
+      InputTrigger inputTrigger = new InputTrigger(new AnyKeyCondition(), new TriggerAction() {
+            public void perform(final Canvas source, final TwoInputStates inputState, final double tpf) {
+               System.out.println("Additional Message");
+               //System.out.println("Key character pressed: "
+               //         + inputState.getCurrent().getKeyboardState().getKeyEvent().getKeyChar());
+            }
+        });
+
+
+      System.out.println("Triggers:");
+      for(InputTrigger in : _logicalLayer.getTriggers()) {
+         System.out.println(in);
+         _logicalLayer.deregisterTrigger(in);
+      }
+      System.out.println("After:"+_logicalLayer.getTriggers());
+      _logicalLayer.registerTrigger(inputTrigger);
+      _logicalLayer.deregisterTrigger(inputTrigger);
    }
 
 

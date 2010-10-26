@@ -19,7 +19,9 @@ package org.amaze.ArdorTest.DataObjects;
 
 import com.ardor3d.input.MouseManager;
 import com.ardor3d.input.PhysicalLayer;
+import com.ardor3d.input.control.FirstPersonControl;
 import com.ardor3d.input.logical.LogicalLayer;
+import org.amaze.ArdorTest.Utilities.InputUtils;
 
 /**
  *
@@ -27,10 +29,12 @@ import com.ardor3d.input.logical.LogicalLayer;
  */
 public class BasicInput {
 
-   public BasicInput(MouseManager mouseManager, PhysicalLayer physicalLayer, LogicalLayer logicalLayer) {
+   public BasicInput(MouseManager mouseManager, PhysicalLayer physicalLayer, 
+           LogicalLayer logicalLayer, FirstPersonControl firstPersonControl) {
       this.mouseManager = mouseManager;
       this.physicalLayer = physicalLayer;
       this.logicalLayer = logicalLayer;
+      this.firstPersonControl = firstPersonControl;
    }
 
    public static BasicInput newBasicInput(ScreenData screenData, OpenGlWrapper wrapperData){
@@ -39,11 +43,14 @@ public class BasicInput {
       PhysicalLayer physicalLayer = wrapperData.physicalLayer;
       LogicalLayer logicalLayer = new LogicalLayer();
       logicalLayer.registerInput(screenData.nativeCanvas, physicalLayer);
+      FirstPersonControl firstPersonControl = InputUtils.addFpControl(logicalLayer);
 
-      return new BasicInput(mouseManager, physicalLayer, logicalLayer);
+
+      return new BasicInput(mouseManager, physicalLayer, logicalLayer, firstPersonControl);
    }
 
    public final MouseManager mouseManager;
    public final PhysicalLayer physicalLayer;
    public final LogicalLayer logicalLayer;
+   public final FirstPersonControl firstPersonControl;
 }

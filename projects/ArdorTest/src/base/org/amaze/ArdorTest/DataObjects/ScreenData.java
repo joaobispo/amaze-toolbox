@@ -20,6 +20,7 @@ package org.amaze.ArdorTest.DataObjects;
 import com.ardor3d.framework.DisplaySettings;
 import com.ardor3d.framework.NativeCanvas;
 import com.ardor3d.scenegraph.Node;
+import org.amaze.ArdorTest.BaseImplementations.BaseScene;
 
 /**
  *
@@ -27,21 +28,28 @@ import com.ardor3d.scenegraph.Node;
  */
 public class ScreenData {
 
-   public ScreenData(DisplaySettings displaySettings, NativeCanvas nativeCanvas, Node _root) {
+   public ScreenData(DisplaySettings displaySettings, NativeCanvas nativeCanvas, Node _root,
+           BaseScene scene) {
       this.displaySettings = displaySettings;
       this.nativeCanvas = nativeCanvas;
       this._root = _root;
+      this.scene = scene;
    }
 
-   public static ScreenData newScreenData(DisplaySettings displaySettings, OpenGlWrapper wrapperData) {
+   public static ScreenData newScreenData(DisplaySettings displaySettings, OpenGlWrapper wrapperData,
+           BaseScene scene) {
 
       NativeCanvas nativeCanvas = wrapperData.nativeCanvas;
       Node _root = new Node();
 
-      return new ScreenData(displaySettings, nativeCanvas, _root);
+      ScreenData screenData = new ScreenData(displaySettings, nativeCanvas, _root, scene);
+      scene.registerScreenData(screenData);
+      return screenData;
    }
 
     public final DisplaySettings displaySettings;
     public final NativeCanvas nativeCanvas;
     public final Node _root;
+    public final BaseScene scene;
+
 }

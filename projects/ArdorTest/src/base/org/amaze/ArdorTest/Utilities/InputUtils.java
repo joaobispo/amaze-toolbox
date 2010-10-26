@@ -23,6 +23,7 @@ import com.ardor3d.input.GrabbedState;
 import com.ardor3d.input.Key;
 import com.ardor3d.input.MouseButton;
 import com.ardor3d.input.MouseManager;
+import com.ardor3d.input.control.FirstPersonControl;
 import com.ardor3d.input.logical.AnyKeyCondition;
 import com.ardor3d.input.logical.InputTrigger;
 import com.ardor3d.input.logical.KeyPressedCondition;
@@ -34,36 +35,46 @@ import com.ardor3d.input.logical.TriggerAction;
 import com.ardor3d.input.logical.TwoInputStates;
 import com.ardor3d.math.Ray3;
 import com.ardor3d.math.Vector2;
+import com.ardor3d.math.Vector3;
 import com.ardor3d.renderer.state.LightState;
 import com.ardor3d.renderer.state.WireframeState;
 import com.ardor3d.scenegraph.Node;
 import com.ardor3d.scenegraph.event.DirtyType;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import org.amaze.ArdorTest.BaseImplementations.BaseScene;
+import org.amaze.ArdorTest.DataObjects.BaseData;
 
 /**
  *
  * @author Joao Bispo
  */
-public class Inputs {
+public class InputUtils {
 
-   public static void registerInputTriggers(final BaseApp app) {
-      final BaseScene baseApp = app.getScene();
-      LogicalLayer _logicalLayer = baseApp.getLogicalLayer();
-      final NativeCanvas _canvas = baseApp.getNativeCanvas();
-      final LightState _lightState = baseApp.getLightState();
-      final Node _root = baseApp.getRootNode();
-      final BaseScene dataScene = baseApp;
-      final MouseManager _mouseManager = baseApp.getMouseManager();
+   /**
+    * Builds a new First Person Control and adds it to the given logical layer.
+    * It sets the Y axis as the up axis and movement is enabled only when dragging.
+    * @param logicalLayer
+    * @return
+    */
+   public static FirstPersonControl addFpControl(LogicalLayer logicalLayer) {
+      FirstPersonControl firstPersonControl = FirstPersonControl.setupTriggers(logicalLayer, _worldUp, true);
+      return firstPersonControl;
+   }
 
+   public static void initBaseInputs(final BaseData baseData) {
+      LogicalLayer _logicalLayer = baseData.basicInput.logicalLayer;
+
+      final Node _root = baseData.screenData._root;
+      final NativeCanvas _canvas = baseData.screenData.nativeCanvas;
+      final LightState _lightState = baseData.renderStateData._lightState;
+      final WireframeState _wireframeState = baseData.renderStateData._wireframeState;
+      final BaseScene dataScene = baseData.screenData.scene;
+      final MouseManager _mouseManager = baseData.basicInput.mouseManager;
       // check if this example worries about input at all
       if (_logicalLayer == null) {
          return;
       }
-
-
-
-      app.initFpsControl();
 
         _logicalLayer.registerTrigger(new InputTrigger(new MouseButtonClickedCondition(MouseButton.RIGHT),
                 new TriggerAction() {
@@ -75,13 +86,13 @@ public class Inputs {
                         final Ray3 pickRay = new Ray3();
                         _canvas.getCanvasRenderer().getCamera().getPickRay(pos, false, pickRay);
                         Vector2.releaseTempInstance(pos);
-                        RayUtils.doPick(pickRay, baseApp.getRootNode());
+                        RayUtils.doPick(pickRay, _root);
                     }
                 }, "pickTrigger"));
 
         _logicalLayer.registerTrigger(new InputTrigger(new KeyPressedCondition(Key.ESCAPE), new TriggerAction() {
             public void perform(final Canvas source, final TwoInputStates inputState, final double tpf) {
-                dataScene.setExit();
+                baseData.setExit(true);
             }
         }));
 
@@ -101,7 +112,6 @@ public class Inputs {
 
         _logicalLayer.registerTrigger(new InputTrigger(new KeyPressedCondition(Key.T), new TriggerAction() {
             public void perform(final Canvas source, final TwoInputStates inputState, final double tpf) {
-               WireframeState _wireframeState  = baseApp.getWireframeState();
                _wireframeState.setEnabled(!_wireframeState.isEnabled());
                 // Either an update or a markDirty is needed here since we did not touch the affected spatial directly.
                 _root.markDirty(DirtyType.RenderState);
@@ -164,8 +174,7 @@ public class Inputs {
                         + inputState.getCurrent().getKeyboardState().getKeyEvent().getKeyChar());
             }
         }));
+   }
 
-    }
-
-
+   private static final Vector3 _worldUp = new Vector3(0, 1, 0);
 }
