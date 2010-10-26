@@ -50,7 +50,7 @@ public class BaseUpdater implements Updater {
       logger.info("Display Version: " + caps.getDisplayVersion());
       logger.info("Shading Language Version: " + caps.getShadingLanguageVersion());
 
-        Inputs.registerInputTriggers(baseApp);
+        //Inputs.registerInputTriggers(baseApp);
 /*
         AWTImageLoader.registerLoader();
 
@@ -108,7 +108,7 @@ public class BaseUpdater implements Updater {
       Node _root = baseApp.getScene().getRootNode();
       
       if (_canvas.isClosing()) {
-            baseApp.exit();
+            baseApp.getScene().setExit();
         }
 
         /** update stats, if enabled. */
@@ -129,7 +129,7 @@ public class BaseUpdater implements Updater {
         _root.updateGeometricState(timer.getTimePerFrame(), true);
    }
 
-   private void updateLogicalLayer(final ReadOnlyTimer timer) {
+   protected void updateLogicalLayer(final ReadOnlyTimer timer) {
       LogicalLayer _logicalLayer = baseApp.getScene().getLogicalLayer();
 
         // check and execute any input triggers, if we are concerned with input
@@ -138,7 +138,7 @@ public class BaseUpdater implements Updater {
         }
     }
 
-    private void updateExample(final ReadOnlyTimer timer) {
+    protected void updateExample(final ReadOnlyTimer timer) {
     // does nothing
     }
 

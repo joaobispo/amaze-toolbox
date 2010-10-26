@@ -17,16 +17,8 @@
 
 package org.amaze.ArdorTest.Utilities;
 
-import com.ardor3d.framework.DisplaySettings;
-import com.ardor3d.framework.FrameHandler;
-import com.ardor3d.framework.NativeCanvas;
-import com.ardor3d.framework.Updater;
-import com.ardor3d.input.MouseManager;
-import com.ardor3d.input.PhysicalLayer;
 import com.ardor3d.input.control.FirstPersonControl;
-import com.ardor3d.input.logical.LogicalLayer;
 import com.ardor3d.math.Vector3;
-import com.ardor3d.scenegraph.Node;
 
 /**
  *
@@ -38,7 +30,7 @@ public class BaseApp {
 
    public BaseApp(BaseScene baseScene) {
       dataScene = baseScene;
-      _exit = false;
+//      _exit = false;
    }
 
 
@@ -48,9 +40,12 @@ public class BaseApp {
    }
 
 
+   /*
     public void exit() {
         _exit = true;
     }
+    *
+    */
  /*
    public DisplaySettings getDisplaySettings() {
       return dataScene.getDisplaySettings();
@@ -84,9 +79,12 @@ public class BaseApp {
       return firstPersonControl;
    }
 
+   /*
    public boolean isExit() {
       return _exit;
    }
+    * 
+    */
 
    public BaseScene getScene() {
       return dataScene;
@@ -98,7 +96,7 @@ public class BaseApp {
    //protected  Updater updaterClass;
    protected  FirstPersonControl firstPersonControl;
 
-   private volatile boolean _exit;
+   //private volatile boolean _exit;
 
 
    private static final Vector3 _worldUp = new Vector3(0, 1, 0);

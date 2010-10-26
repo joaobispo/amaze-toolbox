@@ -26,39 +26,41 @@ import com.ardor3d.util.ContextGarbageCollector;
 import com.ardor3d.util.Timer;
 
 /**
+ * Implements the infinite loop of the application.
  *
  * @author Joao Bispo
  */
 public class BaseRunner implements Runnable {
 
-   public BaseRunner(BaseApp baseScene, Updater updater) {
-      this.baseApp = baseScene;
+   public BaseRunner(Updater updater, NativeCanvas nativeCanvas) {
+      _exit = false;
       frameHandler = new FrameHandler(new Timer());
+      this.nativeCanvas = nativeCanvas;
 
       // Register our example as an updater.
       frameHandler.addUpdater(updater);
 
       // register our native canvas
-      frameHandler.addCanvas(baseScene.getScene().getNativeCanvas());
+      frameHandler.addCanvas(nativeCanvas);
    }
 
 
 
-   private final BaseApp baseApp;
-   private FrameHandler frameHandler;
+   private final FrameHandler frameHandler;
+   private final NativeCanvas nativeCanvas;
    //private volatile boolean _exit = false;
 
 public void run() {
         try {
            frameHandler.init();
 
-            while (!baseApp.isExit()) {
+            while (!_exit) {
+//            while (!baseScene.isExit()) {
                 frameHandler.updateFrame();
                 Thread.yield();
             }
 
             // grab the graphics context so cleanup will work out.
-           NativeCanvas nativeCanvas = baseApp.getScene().getNativeCanvas();
             final CanvasRenderer cr = nativeCanvas.getCanvasRenderer();
             cr.makeCurrentContext();
             quit(nativeCanvas.getCanvasRenderer().getRenderer(), nativeCanvas);
@@ -78,6 +80,14 @@ public void run() {
     }
 
 
+   /**
+    * Changes the exit flag to true.
+    */
+   public void exit() {
+      _exit = true;
+   }
+
     /** If true (the default) we will call System.exit on end of demo. */
     public static boolean QUIT_VM_ON_EXIT = true;
+    private volatile boolean _exit;
 }

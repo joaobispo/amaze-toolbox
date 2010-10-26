@@ -19,14 +19,17 @@ package org.amaze.ArdorTest;
 
 import com.ardor3d.example.PropertiesGameSettings;
 import com.ardor3d.framework.Updater;
+import com.ardor3d.renderer.state.RenderState;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import org.amaze.ArdorTest.DataObjects.BasicInput;
+import org.amaze.ArdorTest.DataObjects.ScreenData;
 import org.amaze.ArdorTest.Utilities.BaseRunner;
 import org.amaze.ArdorTest.Utilities.BaseApp;
 import org.amaze.ArdorTest.Utilities.BaseScene;
 import org.amaze.ArdorTest.Utilities.BaseUpdater;
 import org.amaze.ArdorTest.Utilities.ExtendedApp;
-import org.amaze.ArdorTest.Utilities.Settings;
+import org.amaze.ArdorTest.Utilities.SettingsUtils;
 import org.ancora.SharedLibrary.LoggingUtils;
 
 /**
@@ -59,14 +62,21 @@ public class LoadModelTest implements ExtendedApp {
    private void init() {
       // Load game properties
       PropertiesGameSettings gameProperties = new PropertiesGameSettings("ardorSettings.properties", null);
-      final PropertiesGameSettings prefs = Settings.getPreferencesWithWindow(gameProperties, this.getClass());
+      final PropertiesGameSettings prefs = SettingsUtils.getPreferencesWithWindow(gameProperties, this.getClass());
+
+      BaseScene baseScene = new BaseScene();
+      Object[] objects = SettingsUtils.newDataObjects(prefs, baseScene);
+      ScreenData screenData = (ScreenData) objects[0];
+      BasicInput basicInput = (BasicInput) objects[1];
+      RenderState renderState = (RenderState) objects[2];
 
       // Get BaseScene
-      BaseScene baseScene = BaseScene.newBaseScene(prefs);
-      BaseApp baseApp = new BaseApp(baseScene);
+      //BaseScene baseScene = BaseScene.newBaseScene(prefs);
+      //BaseApp baseApp = new BaseApp(baseScene);
+
       Updater updater = new BaseUpdater(baseApp);
       ExecutorService executor = Executors.newSingleThreadExecutor();
-      executor.submit(new BaseRunner(baseApp, updater));
+      executor.submit(new BaseRunner(baseScene, updater));
    }
 
    public void initApp() {

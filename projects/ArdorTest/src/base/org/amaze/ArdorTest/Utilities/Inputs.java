@@ -81,7 +81,7 @@ public class Inputs {
 
         _logicalLayer.registerTrigger(new InputTrigger(new KeyPressedCondition(Key.ESCAPE), new TriggerAction() {
             public void perform(final Canvas source, final TwoInputStates inputState, final double tpf) {
-                app.exit();
+                dataScene.setExit();
             }
         }));
 

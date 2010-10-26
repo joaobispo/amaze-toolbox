@@ -14,7 +14,7 @@
  *  limitations under the License.
  *  under the License.
  */
-package org.amaze.ArdorTest.Utilities;
+package org.amaze.ArdorTest.DataObjects;
 
 import com.ardor3d.framework.DisplaySettings;
 import com.ardor3d.framework.NativeCanvas;
@@ -40,6 +40,8 @@ import com.ardor3d.renderer.lwjgl.LwjglTextureRendererProvider;
 import org.ancora.SharedLibrary.LoggingUtils;
 
 /**
+ * Provides implementations of classes which depend on OpenGL wrappers, such
+ * as JOGL and LWJGL.
  *
  * @author Joao Bispo
  */
@@ -97,6 +99,15 @@ public class OpenGlWrapper {
    }
 
 
+   /**
+    * Builds a new OpenGlWrapper, based on the name of the renderer (JOGL, LWJGL).
+    *
+    * @param rendererName
+    * @param displaySettings
+    * @param scene
+    * @param textureRenderer
+    * @return
+    */
    public static OpenGlWrapper newData(String rendererName,
            DisplaySettings displaySettings, Scene scene, TextureRendererFactory textureRenderer) {
       if (LWJGL_STRING.equalsIgnoreCase(rendererName)) {

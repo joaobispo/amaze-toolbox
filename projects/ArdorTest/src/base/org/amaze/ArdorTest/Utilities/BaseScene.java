@@ -17,6 +17,7 @@
 
 package org.amaze.ArdorTest.Utilities;
 
+import org.amaze.ArdorTest.DataObjects.OpenGlWrapper;
 import com.ardor3d.example.PropertiesGameSettings;
 import com.ardor3d.framework.DisplaySettings;
 import com.ardor3d.framework.NativeCanvas;
@@ -52,6 +53,8 @@ public class BaseScene implements Scene {
       _wireframeState = new WireframeState();
       _screenShotExp = new ScreenShotImageExporter();
       logicalLayer = new LogicalLayer();
+
+      _exit = false;
    }
 
    public void initRenderStates() {
@@ -64,7 +67,7 @@ public class BaseScene implements Scene {
 
    public void initScene(PropertiesGameSettings prefs) {
       // Initialize DisplaySettings
-      displaySettings = Settings.newDisplaySetting(prefs);
+      displaySettings = SettingsUtils.newDisplaySetting(prefs);
 
       // Initialize OpenGl bindings
       OpenGlWrapper wrapperData = OpenGlWrapper.newData(prefs.getRenderer(),
@@ -180,6 +183,12 @@ public class BaseScene implements Scene {
       return nativeCanvas;
    }
 
+   public boolean isExit() {
+      return _exit;
+   }
+
+   
+
    public void switchShowDepth() {
       _showDepth = !_showDepth;
    }
@@ -191,6 +200,13 @@ public class BaseScene implements Scene {
    public void switchShowNormals() {
       _showNormals = !_showNormals;
    }
+
+   /**
+    * Changes the exit flag to true.
+    */
+   public void setExit() {
+        _exit = true;
+    }
 
    private boolean _showBounds = false;
    private boolean _showNormals = false;
@@ -207,6 +223,8 @@ public class BaseScene implements Scene {
    private NativeCanvas nativeCanvas;
 
    private ScreenShotImageExporter _screenShotExp;
+
+   private volatile boolean _exit;
 
    //private BaseApp baseApp;
 

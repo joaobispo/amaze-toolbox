@@ -1,0 +1,49 @@
+/*
+ *  Copyright 2010 Abstract Maze.
+ * 
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *  under the License.
+ */
+
+package org.amaze.ArdorTest.DataObjects;
+
+import com.ardor3d.input.MouseManager;
+import com.ardor3d.input.PhysicalLayer;
+import com.ardor3d.input.logical.LogicalLayer;
+
+/**
+ *
+ * @author Joao Bispo
+ */
+public class BasicInput {
+
+   public BasicInput(MouseManager mouseManager, PhysicalLayer physicalLayer, LogicalLayer logicalLayer) {
+      this.mouseManager = mouseManager;
+      this.physicalLayer = physicalLayer;
+      this.logicalLayer = logicalLayer;
+   }
+
+   public static BasicInput newBasicInput(ScreenData screenData, OpenGlWrapper wrapperData){
+
+      MouseManager mouseManager = wrapperData.mouseManager;
+      PhysicalLayer physicalLayer = wrapperData.physicalLayer;
+      LogicalLayer logicalLayer = new LogicalLayer();
+      logicalLayer.registerInput(screenData.nativeCanvas, physicalLayer);
+
+      return new BasicInput(mouseManager, physicalLayer, logicalLayer);
+   }
+
+   public final MouseManager mouseManager;
+   public final PhysicalLayer physicalLayer;
+   public final LogicalLayer logicalLayer;
+}

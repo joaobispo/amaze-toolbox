@@ -20,6 +20,9 @@ package org.amaze.ArdorTest.Utilities;
 import com.ardor3d.example.PropertiesDialog;
 import com.ardor3d.example.PropertiesGameSettings;
 import com.ardor3d.framework.DisplaySettings;
+import com.ardor3d.framework.Scene;
+import com.ardor3d.renderer.TextureRendererFactory;
+import com.ardor3d.renderer.state.RenderState;
 import com.ardor3d.util.resource.ResourceLocatorTool;
 import java.awt.EventQueue;
 import java.net.URL;
@@ -27,13 +30,17 @@ import java.util.Stack;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.amaze.ArdorTest.DataObjects.BasicInput;
+import org.amaze.ArdorTest.DataObjects.OpenGlWrapper;
+import org.amaze.ArdorTest.DataObjects.RenderStateData;
+import org.amaze.ArdorTest.DataObjects.ScreenData;
 import org.ancora.SharedLibrary.LoggingUtils;
 
 /**
  *
  * @author Joao Bispo
  */
-public class Settings {
+public class SettingsUtils {
 
    /**
     * Calls a dialog window and asks for properties.
@@ -142,8 +149,45 @@ public class Settings {
       return new DisplaySettings(width, height, depth, frequency, alphaBits, depthBits, stencilBits, samples, isFullscreen, stereo);
 
    }
-   
-   
+
+   /**
+    * Builds and returns an array containing data objects.
+    *
+    * <p>The array contains the following objects, by this order:
+    * <br>ScreenData screenData = (ScreenData)objects[0];
+    * <br>BasicInput basicInput = (BasicInput)objects[1];
+    * <br>RenderState renderState = (RenderState)objects[2];
+    *
+    * @param prefs
+    * @return
+    */
+   public static Object[] newDataObjects(PropertiesGameSettings prefs, Scene scene) {
+      Object[] objects = new Object[3];
+
+       // Initialize DisplaySettings
+      DisplaySettings displaySettings = SettingsUtils.newDisplaySetting(prefs);
+
+      // Initialize OpenGl bindings
+      OpenGlWrapper wrapperData = OpenGlWrapper.newData(prefs.getRenderer(),
+              displaySettings, scene, TextureRendererFactory.INSTANCE);
+      if(wrapperData == null) {
+         LoggingUtils.getLogger().
+                 warning("Could not initialize OpenGL wrapper objects for renderer '"+
+                 prefs.getRenderer()+"'.");
+         return null;
+      }
+
+      ScreenData screenData = ScreenData.newScreenData(displaySettings, wrapperData);
+      objects[0] = screenData;
+
+      BasicInput basicInput = BasicInput.newBasicInput(screenData, wrapperData);
+      objects[1] = basicInput;
+
+      RenderStateData renderStateData = RenderStateData.newRenderState(screenData._root);
+      objects[2] = renderStateData;
+
+      return objects;
+   }
 
 
   
