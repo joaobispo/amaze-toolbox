@@ -35,7 +35,8 @@ public class BaseRunner implements Runnable {
 
    public BaseRunner(Updater updater, BaseData baseData) {
       //_exit = false;
-      frameHandler = new FrameHandler(new Timer());
+      //frameHandler = new FrameHandler(new Timer());
+      frameHandler = new FrameHandler(baseData.screenData.timer);
       //this.nativeCanvas = nativeCanvas;
       this.baseData = baseData;
 

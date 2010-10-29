@@ -17,17 +17,25 @@
 
 package org.amaze.ArdorTests.Test2;
 
+import com.ardor3d.framework.Canvas;
 import org.amaze.ArdorTests.Test1.*;
 import com.ardor3d.bounding.BoundingBox;
 import com.ardor3d.bounding.BoundingSphere;
 import com.ardor3d.bounding.BoundingVolume;
+import com.ardor3d.extension.animation.skeletal.AnimationManager;
 import com.ardor3d.extension.animation.skeletal.SkeletonPose;
+import com.ardor3d.extension.animation.skeletal.blendtree.SimpleAnimationApplier;
 import com.ardor3d.extension.model.collada.jdom.ColladaImporter;
+import com.ardor3d.extension.model.collada.jdom.data.AnimationItem;
 import com.ardor3d.extension.model.collada.jdom.data.ColladaStorage;
 import com.ardor3d.extension.model.collada.jdom.data.SkinData;
 import com.ardor3d.framework.NativeCanvas;
+import com.ardor3d.input.InputState;
 import com.ardor3d.input.control.FirstPersonControl;
+import com.ardor3d.input.logical.InputTrigger;
 import com.ardor3d.input.logical.LogicalLayer;
+import com.ardor3d.input.logical.TriggerAction;
+import com.ardor3d.input.logical.TwoInputStates;
 import com.ardor3d.light.DirectionalLight;
 import com.ardor3d.math.ColorRGBA;
 import com.ardor3d.math.Matrix3;
@@ -38,6 +46,8 @@ import com.ardor3d.renderer.Camera;
 import com.ardor3d.renderer.state.LightState;
 import com.ardor3d.scenegraph.Node;
 import com.ardor3d.util.ReadOnlyTimer;
+import com.google.common.base.Predicate;
+import java.util.ArrayList;
 import java.util.List;
 import net.java.games.input.Component;
 import net.java.games.input.Component.Identifier;
@@ -66,6 +76,14 @@ public class Test2Updater extends BaseUpdater {
    @Override
    protected void updateExample(ReadOnlyTimer timer) {
 
+      
+      //Component component = gamepad.getFaceButtons().getDirection(Dpad.Direction.UP);
+      //if(component.getPollData() > 0.0f) {
+      //   System.out.println("Up Button:"+component.getPollData());
+      //}
+      
+       
+
       //Quaternion quat = new Quaternion();
       //quat.addLocal(new Quaternion().fromAngleAxis(currentAngle, Vector3.UNIT_X));
       //quat.addLocal(new Quaternion().fromAngleAxis(currentAngle, Vector3.UNIT_Z));
@@ -75,8 +93,20 @@ public class Test2Updater extends BaseUpdater {
 //      colladaNode.setRotation(new Quaternion().fromAngleAxis(currentAngle, Vector3.UNIT_X));
 
       // Change angle according to controller
-      double xChange = xAxis.getPollData() * maxRotationVel;
-      double yChange = yAxis.getPollData() * maxRotationVel;
+      float sensitivity = 0.2f;
+      
+      float xPolled = xAxis.getPollData();
+      if(Math.abs(xPolled) < sensitivity) {
+         xPolled = 0.0f;
+      }
+
+      float yPolled = yAxis.getPollData();
+      if(Math.abs(yPolled) < sensitivity) {
+         yPolled = 0.0f;
+      }
+
+      double xChange = xPolled * maxRotationVel;
+      double yChange = yPolled * maxRotationVel;
 
       /*
       if(Math.abs(xChange) > 0.0001) {
@@ -129,11 +159,17 @@ public class Test2Updater extends BaseUpdater {
       if(Math.abs(yAngle) > 2*Math.PI) {
          yAngle = yAngle % Math.PI;
       }
-       
+
+      if (actions.size() > 0) {
+         actions.remove(0);
+         yAngle = 0.0d;
+         xAngle = 0.0d;
+
+      }
        
 
-Matrix3 matrix3 = new Matrix3();
-matrix3.fromAngles(yAngle, xAngle, 0);
+   Matrix3 matrix3 = new Matrix3();
+   matrix3.fromAngles(yAngle, xAngle, 0);
 
       //System.out.println("X:"+xAxis.getPollData());
       //System.out.println("Y:"+yAxis.getPollData());
@@ -141,8 +177,16 @@ matrix3.fromAngles(yAngle, xAngle, 0);
       
      // _workerMatrix.fromAngleNormalAxis(currentAngle, Vector3.UNIT_Y);
      // _workerMatrix.fromAngleNormalAxis(currentAngle, Vector3.UNIT_Z);
-      
+
+//      if (buttonActive) {
+//         colladaNode.setRotation(new Matrix3());
+//      } else {
+   
       colladaNode.setRotation(matrix3);
+   
+
+         //colladaNode.setRotation(matrix3);
+//      }
       //colladaNode.setRotation(_workerMatrix);
 
       /*
@@ -162,6 +206,7 @@ matrix3.fromAngles(yAngle, xAngle, 0);
    protected void initExample() {
       baseData.screenData.nativeCanvas.setTitle("Labirinto - Ardor Test 1");
       baseData.screenData.nativeCanvas.getCanvasRenderer().getRenderer().setBackgroundColor(ColorRGBA.GRAY);
+
 
       // Lights
       LightState _lightState = baseData.renderStateData._lightState;
@@ -195,9 +240,15 @@ matrix3.fromAngles(yAngle, xAngle, 0);
       // Load the collada scene
       //final String mainFile = "collada/skeleton/skeleton.walk.dae";
       final String mainFile = "collada/test1/monkey.dae";
+      //final String mainFile = "collada/test1/bouncing_ball.dae";
       final ColladaStorage storage = colladaImporter.load(mainFile);
       colladaNode = storage.getScene();
       final List<SkinData> skinDatas = storage.getSkins();
+      System.out.println("Animation:"+storage.getAnimationItemRoot());
+      System.out.println("Joints:"+storage.getJointChannels());
+      System.out.println("Asset:"+storage.getAssetData());
+      AnimationItem ani = storage.getAnimationItemRoot();
+      //System.out.println("Size:"+skinDatas);
       //pose = skinDatas.get(0).getPose();
 
       //createAnimation(colladaImporter);
@@ -215,6 +266,12 @@ matrix3.fromAngles(yAngle, xAngle, 0);
             }
 
       positionCamera(upAxis);
+
+      manager = new AnimationManager(baseData.screenData.timer);
+
+      // Add our "applier logic".
+        final SimpleAnimationApplier applier = new SimpleAnimationApplier();
+        manager.setApplier(applier);
    }
 
    private void positionCamera(final ReadOnlyVector3 upAxis) {
@@ -257,7 +314,9 @@ matrix3.fromAngles(yAngle, xAngle, 0);
    private Node colladaNode;
    private SkeletonPose pose;
 
-   private Controller gamepad;
+   AnimationManager manager;
+
+   private Gamepad gamepad;
    private double xAngle;
    private double yAngle;
    private Component xAxis;
@@ -271,7 +330,7 @@ matrix3.fromAngles(yAngle, xAngle, 0);
 //      currentRotation = new Quaternion();
       xAngle = 0.0d;
       yAngle = 0.0d;
-
+/*
       // Get gamepad
       ControllerEnvironment ce = ControllerEnvironment.getDefaultEnvironment();
       Controller[] cs = ce.getControllers();
@@ -289,21 +348,146 @@ matrix3.fromAngles(yAngle, xAngle, 0);
          System.out.println("Could not find a game controller.");
       }
 
+
       // Get some of the components
       Component[] components = gamepad.getComponents();
       for(Component comp : components) {
          if(comp.getIdentifier().getName().equals("y")) {
             yAxis = comp;
+            System.out.println("DeadZoneX:"+yAxis.getDeadZone());
          }
          
          if(comp.getIdentifier().getName().equals("x")) {
             xAxis = comp;
+            System.out.println("DeadZoneX:"+xAxis.getDeadZone());
          }
       }
       System.out.println(gamepad.getComponent(null));
+*/
+      gamepad = Gamepad.firstGamepadFound();
+      yAxis = gamepad.getyAxis();
+      xAxis = gamepad.getxAxis();
 
-      //setupController(gamepad);
+      setupController(gamepad);
+
    }
+
+   private void setupController(final Gamepad gamepad) {
+      LogicalLayer logicalLayer = baseData.basicInput.logicalLayer;
+
+      final Predicate<TwoInputStates> keyPressed = new Predicate<TwoInputStates>() {
+         //List<Component> faceButtons = gamepad.getFaceButtons().getDirections();
+         Component upButton = gamepad.getFaceButtons().getDirection(Dpad.Direction.UP);
+  //       Key[] keys = new Key[] { Key.W, Key.A, Key.S, Key.D, Key.LEFT, Key.RIGHT, Key.UP, Key.DOWN };
+
+         @Override
+            public boolean apply(final TwoInputStates states) {
+                    if (upButton.getPollData() == 1.0 && !isButtonDirty) {
+                       isButtonDirty = true;
+                       return true;
+                    }
+
+                return false;
+            }
+        };
+
+      final Predicate<TwoInputStates> keysHeld = new Predicate<TwoInputStates>() {
+         List<Component> faceButtons = gamepad.getFaceButtons().getDirections();
+  //       Key[] keys = new Key[] { Key.W, Key.A, Key.S, Key.D, Key.LEFT, Key.RIGHT, Key.UP, Key.DOWN };
+
+         @Override
+            public boolean apply(final TwoInputStates states) {
+                for (final Component k : faceButtons) {
+                    if (states.getCurrent() != null && k.getPollData() > 0.0) {
+                       return true;
+                    }
+                }
+                return false;
+            }
+        };
+
+          final TriggerAction buttonAction = new TriggerAction() {
+         //public void perform(final Canvas source, final TwoInputStates inputStates, final double tpf) {
+
+         @Override
+         public void perform(Canvas source, TwoInputStates inputState, double tpf) {
+            //colladaNode.setRotation(new Matrix3());
+            //System.out.println("AHHHHH");
+            //buttonActive = true;
+  /*
+            if(!isButtonDirty) {
+               isButtonDirty = true;
+               buttonActive = true;
+               System.out.println("Button pressed");
+            }
+   *
+   */
+            actions.add(0);
+            System.out.println("Button Pressed");
+         }
+      };
+
+              logicalLayer.registerTrigger(new InputTrigger(keyPressed, buttonAction));
+
+      final Predicate<TwoInputStates> keyReleased = new Predicate<TwoInputStates>() {
+         Component upButton = gamepad.getFaceButtons().getDirection(Dpad.Direction.UP);
+  //       Key[] keys = new Key[] { Key.W, Key.A, Key.S, Key.D, Key.LEFT, Key.RIGHT, Key.UP, Key.DOWN };
+
+         @Override
+            public boolean apply(final TwoInputStates states) {
+//                for (final Component k : faceButtons) {
+                    if (upButton.getPollData() == 0.0f && isButtonDirty) {
+                       isButtonDirty = false;
+                       return true;
+                    }
+  //              }
+                return false;
+            }
+
+        };
+
+      final Predicate<TwoInputStates> keysReleased = new Predicate<TwoInputStates>() {
+         List<Component> faceButtons = gamepad.getFaceButtons().getDirections();
+  //       Key[] keys = new Key[] { Key.W, Key.A, Key.S, Key.D, Key.LEFT, Key.RIGHT, Key.UP, Key.DOWN };
+
+         @Override
+            public boolean apply(final TwoInputStates states) {
+                for (final Component k : faceButtons) {
+                    if (states.getCurrent() != null && k.getPollData() == 0.0f) {
+                       return true;
+                    }
+                }
+                return false;
+            }
+
+        };
+
+          final TriggerAction buttonRelease = new TriggerAction() {
+         //public void perform(final Canvas source, final TwoInputStates inputStates, final double tpf) {
+
+         @Override
+         public void perform(Canvas source, TwoInputStates inputState, double tpf) {
+  System.out.println("Button Release");
+
+            /*
+            //buttonActive = false;
+            //isButtonDirty = false;
+            if(isButtonDirty) {
+               buttonActive = false;
+               isButtonDirty = false;
+               System.out.println("Button Release");
+            }
+*/
+         }
+      };
+
+
+        logicalLayer.registerTrigger(new InputTrigger(keyReleased, buttonRelease));
+   }
+
+   //private boolean buttonActive;
+   private boolean isButtonDirty;
+   List<Integer> actions = new ArrayList<Integer>();
 
    /*
    private void setupController(Controller gamepad) {

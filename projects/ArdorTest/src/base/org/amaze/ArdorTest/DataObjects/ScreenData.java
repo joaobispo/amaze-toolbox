@@ -20,6 +20,7 @@ package org.amaze.ArdorTest.DataObjects;
 import com.ardor3d.framework.DisplaySettings;
 import com.ardor3d.framework.NativeCanvas;
 import com.ardor3d.scenegraph.Node;
+import com.ardor3d.util.Timer;
 import org.amaze.ArdorTest.BaseImplementations.BaseScene;
 
 /**
@@ -34,6 +35,7 @@ public class ScreenData {
       this.nativeCanvas = nativeCanvas;
       this._root = _root;
       this.scene = scene;
+      this.timer = new Timer();
    }
 
    public static ScreenData newScreenData(DisplaySettings displaySettings, OpenGlWrapper wrapperData,
@@ -50,6 +52,7 @@ public class ScreenData {
     public final DisplaySettings displaySettings;
     public final NativeCanvas nativeCanvas;
     public final Node _root;
+    public final Timer timer;
     public final BaseScene scene;
 
 }
