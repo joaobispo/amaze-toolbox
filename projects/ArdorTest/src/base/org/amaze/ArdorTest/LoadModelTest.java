@@ -36,6 +36,7 @@ import org.amaze.ArdorTest.Utilities.ExtendedApp;
 import org.amaze.ArdorTest.Utilities.InputUtils;
 import org.amaze.ArdorTest.Utilities.SettingsUtils;
 import org.amaze.ArdorTests.Test1.Test1Updater;
+import org.amaze.ArdorTests.Test2.Test2Updater;
 import org.ancora.SharedLibrary.LoggingUtils;
 
 /**
@@ -79,7 +80,8 @@ public class LoadModelTest  {
       //BaseApp baseApp = new BaseApp(baseScene);
 
       //Updater updater = new BaseUpdater(baseData);
-      Updater updater = new Test1Updater(baseData);
+      //Updater updater = new Test1Updater(baseData);
+      Updater updater = new Test2Updater(baseData);
       ExecutorService executor = Executors.newSingleThreadExecutor();
       executor.submit(new BaseRunner(updater, baseData));
    }

@@ -49,6 +49,7 @@ public class Test1Updater extends BaseUpdater {
 
       colladaNode = null;
       pose = null;
+
    }
 
 
