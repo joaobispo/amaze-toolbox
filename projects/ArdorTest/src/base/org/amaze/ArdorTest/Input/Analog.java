@@ -18,9 +18,65 @@
 package org.amaze.ArdorTest.Input;
 
 /**
+ * A value between 0.0 and 1.0.
  *
  * @author Joao Bispo
  */
 public class Analog {
 
+   public Analog() {
+      this(DEFAULT_DEAD_ZONE);
+   }
+
+
+
+   public Analog(float deadZone) {
+      this.deadZone = deadZone;
+      this.value = ZERO_VALUE;
+   }
+
+
+
+   public float getDeadZone() {
+      return deadZone;
+   }
+
+   /**
+    *
+    * @return the analog value without the deadzone subtracted
+    */
+   public float getValueRaw() {
+      return value;
+   }
+
+   public void setValue(float value) {
+      this.value = value;
+   }
+
+   
+
+   /**
+    *
+    * @return the analog value having into account the deadzone
+    */
+   public float getValueProcessed() {
+      if(Math.abs(value) < deadZone) {
+         return ZERO_VALUE;
+      }
+
+      return value;
+   }
+
+   public void setDeadZone(float deadZone) {
+      this.deadZone = deadZone;
+   }
+
+
+
+   private float value;
+   private float deadZone;
+
+   public static final float DEFAULT_DEAD_ZONE = 0.2f;
+   public static final float ONE_VALUE = 1.0f;
+   public static final float ZERO_VALUE = 0.0f;
 }

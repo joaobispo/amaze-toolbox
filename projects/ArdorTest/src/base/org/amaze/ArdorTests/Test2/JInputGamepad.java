@@ -29,6 +29,7 @@ import net.java.games.input.Component;
 import net.java.games.input.Controller;
 import net.java.games.input.Controller.Type;
 import net.java.games.input.ControllerEnvironment;
+import org.amaze.ArdorTest.Input.Analog;
 import org.amaze.ArdorTest.Input.Button;
 import org.amaze.ArdorTest.Input.Gamepad;
 import org.ancora.SharedLibrary.LoggingUtils;
@@ -39,7 +40,6 @@ import org.ancora.SharedLibrary.LoggingUtils;
  * @author Joao Bispo
  */
 public class JInputGamepad {
-
 
 
 
@@ -150,6 +150,10 @@ public class JInputGamepad {
          registerButton(jinput.buttons.get(i), logicalLayer, gamepad);
       }
 
+      for(int i=0; i<jinput.analogs.size(); i++) {
+         registerAnalog(jinput.analogs.get(i), logicalLayer, gamepad);
+      }
+
       return gamepad;
    }
 
@@ -210,6 +214,38 @@ public class JInputGamepad {
         logicalLayer.registerTrigger(new InputTrigger(buttonReleased, releaseAction));
 
    }
+
+
+   private static void registerAnalog(final Component analog, LogicalLayer logicalLayer, Gamepad gamepad) {
+      final Analog newAnalog = new Analog();
+      gamepad.addAnalog(newAnalog);
+
+
+      final Predicate<TwoInputStates> analogChange = new Predicate<TwoInputStates>() {
+
+         @Override
+         public boolean apply(final TwoInputStates states) {
+            float data = analog.getPollData();
+            if (data != newAnalog.getValueRaw()) {
+               return true;
+            }
+
+            return false;
+         }
+      };
+
+      final TriggerAction analogUpdate = new TriggerAction() {
+
+         @Override
+         public void perform(Canvas source, TwoInputStates inputState, double tpf) {
+            newAnalog.setValue(analog.getPollData());
+         }
+      };
+
+      logicalLayer.registerTrigger(new InputTrigger(analogChange, analogUpdate));
+
+   }
+
 
    private List<Component> buttons;
    private List<Component> analogs;

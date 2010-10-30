@@ -17,7 +17,6 @@
 
 package org.amaze.ArdorTest;
 
-import com.ardor3d.example.PropertiesGameSettings;
 import com.ardor3d.framework.Canvas;
 import com.ardor3d.framework.Updater;
 import com.ardor3d.input.control.FirstPersonControl;

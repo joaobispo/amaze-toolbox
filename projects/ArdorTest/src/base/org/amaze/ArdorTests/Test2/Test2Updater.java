@@ -49,6 +49,7 @@ import com.ardor3d.util.ReadOnlyTimer;
 import com.google.common.base.Predicate;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JOptionPane;
 import net.java.games.input.Component;
 import net.java.games.input.Component.Identifier;
 import net.java.games.input.Controller;
@@ -95,20 +96,29 @@ public class Test2Updater extends BaseUpdater {
 //      colladaNode.setRotation(new Quaternion().fromAngleAxis(currentAngle, Vector3.UNIT_X));
 
       // Change angle according to controller
-      float sensitivity = 0.2f;
+      //float sensitivity = 0.2f;
       
-      float xPolled = xAxis.getPollData();
-      if(Math.abs(xPolled) < sensitivity) {
-         xPolled = 0.0f;
+      float xPolled = gamepad.getAnalogs().get(xAxisIndex).getValueProcessed();
+      float yPolled = gamepad.getAnalogs().get(yAxisIndex).getValueProcessed();
+
+      //float xPolled = xAxis.getPollData();
+      //if(Math.abs(xPolled) < sensitivity) {
+      //   xPolled = 0.0f;
+      //}
+
+      //float yPolled = yAxis.getPollData();
+      //if(Math.abs(yPolled) < sensitivity) {
+      //   yPolled = 0.0f;
+      //}
+
+      // Check if button 2 is pressed
+      double currentVelocity = maxRotationVel;
+      if(gamepad.getButtons().get(2).isCurrentlyPressed()) {
+         currentVelocity *= 2.0d;
       }
 
-      float yPolled = yAxis.getPollData();
-      if(Math.abs(yPolled) < sensitivity) {
-         yPolled = 0.0f;
-      }
-
-      double xChange = xPolled * maxRotationVel;
-      double yChange = yPolled * maxRotationVel;
+      double xChange = xPolled * currentVelocity;
+      double yChange = yPolled * currentVelocity;
 
       /*
       if(Math.abs(xChange) > 0.0001) {
@@ -165,10 +175,14 @@ public class Test2Updater extends BaseUpdater {
 if(gamepad.getButtonPressings().size() > 0) {
 //      if (actions.size() > 0) {
 //         actions.remove(0);
-         System.out.println("Button:"+gamepad.getButtonPressings().get(0));
+   Integer buttonId = gamepad.getButtonPressings().get(0);
+         System.out.println("Button:"+buttonId);
          gamepad.getButtonPressings().remove(0);
+
+         if(buttonId != 2) {
          yAngle = 0.0d;
          xAngle = 0.0d;
+   }
 
       }
 
@@ -334,12 +348,14 @@ if(gamepad.getButtonPressings().size() > 0) {
    private Gamepad gamepad;
    private double xAngle;
    private double yAngle;
-   private Component xAxis;
-   private Component yAxis;
+   private int xAxisIndex = 1;
+   private int yAxisIndex = 0;
+   //private Component xAxis;
+   //private Component yAxis;
    //private Quaternion currentRotation;
    private final Matrix3 _workerMatrix = new Matrix3();
 
-   private double maxRotationVel = 0.003;
+   private double maxRotationVel = 0.03;
 
    private void initGamepad() {
 //      currentRotation = new Quaternion();
@@ -380,8 +396,21 @@ if(gamepad.getButtonPressings().size() > 0) {
       System.out.println(gamepad.getComponent(null));
 */
       jinputGamepad = JInputGamepad.firstGamepadFound();
-      yAxis = jinputGamepad.getyAxis();
-      xAxis = jinputGamepad.getxAxis();
+
+      if(jinputGamepad == null) {
+         JOptionPane.showMessageDialog(null, "No game controller found. The program will exit.");
+         System.exit(1);
+      }
+
+      // Check if there are two analog axis
+      if(jinputGamepad.getAnalogs().size() < 2) {
+         JOptionPane.showMessageDialog(null, "Needs a game controller with at least two analog axis. "
+                 + "The program will exit.");
+         System.exit(1);
+      }
+
+      //yAxis = jinputGamepad.getyAxis();
+      //xAxis = jinputGamepad.getxAxis();
 
       gamepad = JInputGamepad.newGamepad(jinputGamepad, baseData.basicInput.logicalLayer);
       //setupController(gamepad);

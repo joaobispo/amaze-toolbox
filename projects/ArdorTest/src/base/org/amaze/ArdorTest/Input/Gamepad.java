@@ -55,7 +55,17 @@ public class Gamepad {
       return pressedFrames;
    }
 
-
+   /**
+    * Sets the deadzone value for the analogs.
+    *
+    * @param deadzone a value between 0.0 and 1.0. Any values of the analog
+    * below this number will be ignored.
+    */
+      public void setAnalogDeadzone(float deadzone) {
+         for(Analog analog : analogs) {
+            analog.setDeadZone(deadzone);
+         }
+   }
 
    public void addPress(Button button) {
       int index = buttons.indexOf(button);
@@ -103,6 +113,10 @@ public class Gamepad {
    public void addButton(Button newButton) {
       buttons.add(newButton);
       pressedFrames.add(0);
+   }
+
+   public void addAnalog(Analog newAnalog) {
+      analogs.add(newAnalog);
    }
 
 }

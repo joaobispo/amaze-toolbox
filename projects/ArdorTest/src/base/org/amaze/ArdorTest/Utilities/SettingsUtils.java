@@ -17,8 +17,6 @@
 
 package org.amaze.ArdorTest.Utilities;
 
-import com.ardor3d.example.PropertiesDialog;
-import com.ardor3d.example.PropertiesGameSettings;
 import com.ardor3d.framework.DisplaySettings;
 import com.ardor3d.input.control.FirstPersonControl;
 import com.ardor3d.renderer.TextureRendererFactory;
@@ -35,6 +33,8 @@ import org.amaze.ArdorTest.DataObjects.BasicInput;
 import org.amaze.ArdorTest.DataObjects.OpenGlWrapper;
 import org.amaze.ArdorTest.DataObjects.RenderStateData;
 import org.amaze.ArdorTest.DataObjects.ScreenData;
+import org.amaze.ArdorTest.PropertiesDialog;
+import org.amaze.ArdorTest.PropertiesGameSettings;
 import org.ancora.SharedLibrary.LoggingUtils;
 
 /**
