@@ -56,6 +56,7 @@ import net.java.games.input.Controller.Type;
 import net.java.games.input.ControllerEnvironment;
 import org.amaze.ArdorTest.BaseImplementations.BaseUpdater;
 import org.amaze.ArdorTest.DataObjects.BaseData;
+import org.amaze.ArdorTest.Input.Gamepad;
 
 /**
  *
@@ -75,7 +76,8 @@ public class Test2Updater extends BaseUpdater {
 
    @Override
    protected void updateExample(ReadOnlyTimer timer) {
-
+      gamepad.updateFrameCount();
+      //System.out.println("Frames:"+baseData.screenData.timer.getFrameRate());
       
       //Component component = gamepad.getFaceButtons().getDirection(Dpad.Direction.UP);
       //if(component.getPollData() > 0.0f) {
@@ -160,12 +162,24 @@ public class Test2Updater extends BaseUpdater {
          yAngle = yAngle % Math.PI;
       }
 
-      if (actions.size() > 0) {
-         actions.remove(0);
+if(gamepad.getButtonPressings().size() > 0) {
+//      if (actions.size() > 0) {
+//         actions.remove(0);
+         System.out.println("Button:"+gamepad.getButtonPressings().get(0));
+         gamepad.getButtonPressings().remove(0);
          yAngle = 0.0d;
          xAngle = 0.0d;
 
       }
+
+
+      int frames = 120;
+      for(int i=0; i<gamepad.getPressedFrames().size(); i++) {
+         if(gamepad.getPressedFrames().get(i) == frames) {
+            System.out.println("Button "+i+" has been pressed for "+frames+" frames.");
+         }
+      }
+
        
 
    Matrix3 matrix3 = new Matrix3();
@@ -316,6 +330,7 @@ public class Test2Updater extends BaseUpdater {
 
    AnimationManager manager;
 
+   private JInputGamepad jinputGamepad;
    private Gamepad gamepad;
    private double xAngle;
    private double yAngle;
@@ -364,15 +379,17 @@ public class Test2Updater extends BaseUpdater {
       }
       System.out.println(gamepad.getComponent(null));
 */
-      gamepad = Gamepad.firstGamepadFound();
-      yAxis = gamepad.getyAxis();
-      xAxis = gamepad.getxAxis();
+      jinputGamepad = JInputGamepad.firstGamepadFound();
+      yAxis = jinputGamepad.getyAxis();
+      xAxis = jinputGamepad.getxAxis();
 
-      setupController(gamepad);
+      gamepad = JInputGamepad.newGamepad(jinputGamepad, baseData.basicInput.logicalLayer);
+      //setupController(gamepad);
 
    }
 
-   private void setupController(final Gamepad gamepad) {
+  /*
+   private void setupController(final JInputGamepad gamepad) {
       LogicalLayer logicalLayer = baseData.basicInput.logicalLayer;
 
       final Predicate<TwoInputStates> keyPressed = new Predicate<TwoInputStates>() {
@@ -422,6 +439,7 @@ public class Test2Updater extends BaseUpdater {
             }
    *
    */
+   /*
             actions.add(0);
             System.out.println("Button Pressed");
          }
@@ -478,16 +496,18 @@ public class Test2Updater extends BaseUpdater {
                System.out.println("Button Release");
             }
 */
-         }
+/*
+}
+
       };
 
 
         logicalLayer.registerTrigger(new InputTrigger(keyReleased, buttonRelease));
    }
-
+*/
    //private boolean buttonActive;
-   private boolean isButtonDirty;
-   List<Integer> actions = new ArrayList<Integer>();
+   //private boolean isButtonDirty;
+   //List<Integer> actions = new ArrayList<Integer>();
 
    /*
    private void setupController(Controller gamepad) {

@@ -17,12 +17,20 @@
 
 package org.amaze.ArdorTests.Test2;
 
+import com.ardor3d.framework.Canvas;
+import com.ardor3d.input.logical.InputTrigger;
+import com.ardor3d.input.logical.LogicalLayer;
+import com.ardor3d.input.logical.TriggerAction;
+import com.ardor3d.input.logical.TwoInputStates;
+import com.google.common.base.Predicate;
 import java.util.ArrayList;
 import java.util.List;
 import net.java.games.input.Component;
 import net.java.games.input.Controller;
 import net.java.games.input.Controller.Type;
 import net.java.games.input.ControllerEnvironment;
+import org.amaze.ArdorTest.Input.Button;
+import org.amaze.ArdorTest.Input.Gamepad;
 import org.ancora.SharedLibrary.LoggingUtils;
 
 /**
@@ -30,10 +38,12 @@ import org.ancora.SharedLibrary.LoggingUtils;
  *
  * @author Joao Bispo
  */
-public class Gamepad {
+public class JInputGamepad {
 
 
-   private Gamepad(Controller firstGameController) {
+
+
+   private JInputGamepad(Controller firstGameController) {
       buttons = new ArrayList<Component>();
       analogs = new ArrayList<Component>();
       relativeAnalogs = new ArrayList<Component>();
@@ -109,7 +119,7 @@ public class Gamepad {
     * 
     * @return
     */
-   public static Gamepad firstGamepadFound() {
+   public static JInputGamepad firstGamepadFound() {
       // Get gamepad
       ControllerEnvironment ce = ControllerEnvironment.getDefaultEnvironment();
       Controller[] cs = ce.getControllers();
@@ -130,9 +140,76 @@ public class Gamepad {
       }
 
 
-      return new Gamepad(firstGameController);
+      return new JInputGamepad(firstGameController);
    }
 
+   public static Gamepad newGamepad(JInputGamepad jinput, LogicalLayer logicalLayer) {
+      Gamepad gamepad = new Gamepad();
+
+      for(int i=0; i<jinput.buttons.size(); i++) {
+         registerButton(jinput.buttons.get(i), logicalLayer, gamepad);
+      }
+
+      return gamepad;
+   }
+
+   private static void registerButton(final Component button, LogicalLayer logicalLayer, final Gamepad gamepad) {
+      final Button newButton = new Button();
+      gamepad.addButton(newButton);
+
+
+      final Predicate<TwoInputStates> buttonPressed = new Predicate<TwoInputStates>() {
+
+         @Override
+         public boolean apply(final TwoInputStates states) {
+            if (button.getPollData() == PRESSED_VALUE && !newButton.isCurrentlyPressed()) {
+               newButton.setCurrentlyPressed(true);
+               return true;
+            }
+
+            return false;
+         }
+      };
+
+      final TriggerAction pressAction = new TriggerAction() {
+
+         @Override
+         public void perform(Canvas source, TwoInputStates inputState, double tpf) {
+            gamepad.addPress(newButton);
+         }
+      };
+
+      logicalLayer.registerTrigger(new InputTrigger(buttonPressed, pressAction));
+
+
+      final Predicate<TwoInputStates> buttonReleased = new Predicate<TwoInputStates>() {
+
+         @Override
+            public boolean apply(final TwoInputStates states) {
+//                for (final Component k : faceButtons) {
+                    if (button.getPollData() == RELEASED_VALUE && newButton.isCurrentlyPressed()) {
+                       newButton.setCurrentlyPressed(false);
+                       return true;
+                    }
+  //              }
+                return false;
+            }
+
+        };
+
+          final TriggerAction releaseAction = new TriggerAction() {
+         //public void perform(final Canvas source, final TwoInputStates inputStates, final double tpf) {
+
+         @Override
+         public void perform(Canvas source, TwoInputStates inputState, double tpf) {
+               gamepad.removePress(newButton);
+         }
+      };
+
+
+        logicalLayer.registerTrigger(new InputTrigger(buttonReleased, releaseAction));
+
+   }
 
    private List<Component> buttons;
    private List<Component> analogs;
@@ -143,6 +220,7 @@ public class Gamepad {
    private Component xAxis;
    private Component yAxis;
 
-
+   public static final float PRESSED_VALUE = 1.0f;
+   public static final float RELEASED_VALUE = 0.0f;
 
 }

@@ -60,8 +60,15 @@ public void run() {
 
             while (!baseData.isExit()) {
 //            while (!baseScene.isExit()) {
+               long initialTime = baseData.screenData.timer.getTime();
                 frameHandler.updateFrame();
-                Thread.yield();
+                long finalTime = baseData.screenData.timer.getTime();
+                long passedTimeNanos = finalTime-initialTime;
+                long passedTimeMillis = (passedTimeNanos / 1000000) + 1;
+                if(passedTimeMillis < TIME_PER_FRAME_MILLIS) {
+                   long sleepTime = TIME_PER_FRAME_MILLIS - passedTimeMillis;
+                   Thread.sleep(sleepTime);
+                }
             }
 
             // grab the graphics context so cleanup will work out.
@@ -97,5 +104,6 @@ public void run() {
 
     /** If true (the default) we will call System.exit on end of demo. */
     public static boolean QUIT_VM_ON_EXIT = true;
+    public static final long TIME_PER_FRAME_MILLIS = 16;
     //private volatile boolean _exit;
 }
