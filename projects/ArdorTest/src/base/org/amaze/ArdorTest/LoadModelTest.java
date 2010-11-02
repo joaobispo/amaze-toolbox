@@ -37,6 +37,7 @@ import org.amaze.ArdorTest.Utilities.InputUtils;
 import org.amaze.ArdorTest.Utilities.SettingsUtils;
 import org.amaze.ArdorTests.Test1.Test1Updater;
 import org.amaze.ArdorTests.Test2.Test2Updater;
+import org.amaze.ArdorTests.Test3.Test3ControllerWithArdorUpdater;
 import org.ancora.SharedLibrary.LoggingUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.OpenGLException;
@@ -100,7 +101,8 @@ public class LoadModelTest  {
 
       //Updater updater = new BaseUpdater(baseData);
       //Updater updater = new Test1Updater(baseData);
-      Updater updater = new Test2Updater(baseData);
+      //Updater updater = new Test2Updater(baseData);
+      Updater updater = new Test3ControllerWithArdorUpdater(baseData);
       ExecutorService executor = Executors.newSingleThreadExecutor();
       executor.submit(new BaseRunner(updater, baseData));
    }
