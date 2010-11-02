@@ -31,7 +31,7 @@ import net.java.games.input.Controller.Type;
 import net.java.games.input.ControllerEnvironment;
 import org.amaze.ArdorTest.Input.Analog;
 import org.amaze.ArdorTest.Input.Button;
-import org.amaze.ArdorTest.Input.Gamepad;
+import org.amaze.ArdorTest.Input.GamepadInput;
 import org.ancora.SharedLibrary.LoggingUtils;
 
 /**
@@ -143,8 +143,25 @@ public class JInputGamepad {
       return new JInputGamepad(firstGameController);
    }
 
-   public static Gamepad newGamepad(JInputGamepad jinput, LogicalLayer logicalLayer) {
-      Gamepad gamepad = new Gamepad();
+   public static GamepadInput newGamepadInput(JInputGamepad jinput) {
+      GamepadInput gamepad = new GamepadInput();
+
+       for(int i=0; i<jinput.buttons.size(); i++) {
+          Button newButton = new Button();
+          newButton.setComponent(jinput.buttons.get(i));
+         gamepad.addButton(newButton);
+      }
+
+      for(int i=0; i<jinput.analogs.size(); i++) {
+
+         gamepad.addAnalog(new Analog());
+      }
+
+      return gamepad;
+   }
+
+   public static GamepadInput newGamepad(JInputGamepad jinput, LogicalLayer logicalLayer) {
+      GamepadInput gamepad = new GamepadInput();
 
       for(int i=0; i<jinput.buttons.size(); i++) {
          registerButton(jinput.buttons.get(i), logicalLayer, gamepad);
@@ -157,7 +174,7 @@ public class JInputGamepad {
       return gamepad;
    }
 
-   private static void registerButton(final Component button, LogicalLayer logicalLayer, final Gamepad gamepad) {
+   private static void registerButton(final Component button, LogicalLayer logicalLayer, final GamepadInput gamepad) {
       final Button newButton = new Button();
       gamepad.addButton(newButton);
 
@@ -216,7 +233,7 @@ public class JInputGamepad {
    }
 
 
-   private static void registerAnalog(final Component analog, LogicalLayer logicalLayer, Gamepad gamepad) {
+   private static void registerAnalog(final Component analog, LogicalLayer logicalLayer, GamepadInput gamepad) {
       final Analog newAnalog = new Analog();
       gamepad.addAnalog(newAnalog);
 

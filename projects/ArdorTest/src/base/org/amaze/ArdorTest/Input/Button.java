@@ -17,6 +17,8 @@
 
 package org.amaze.ArdorTest.Input;
 
+import net.java.games.input.Component;
+
 /**
  *
  * @author Joao Bispo
@@ -25,6 +27,7 @@ public class Button {
 
    public Button() {
       currentlyPressed = false;
+      component = null;
    }
 
    public boolean isCurrentlyPressed() {
@@ -35,7 +38,21 @@ public class Button {
       this.currentlyPressed = currentlyPressed;
    }
 
+   public void setComponent(Component component) {
+      this.component = component;
+   }
+
+   public Component getComponent() {
+      return component;
+   }
+
+   @Override
+   public String toString() {
+      return Boolean.toString(isCurrentlyPressed());
+   }
+
    
 
-   boolean currentlyPressed;
+   protected boolean currentlyPressed;
+   protected Component component;
 }

@@ -39,6 +39,7 @@ import com.ardor3d.util.resource.SimpleResourceLocator;
 import com.ardor3d.util.stat.StatCollector;
 import java.net.URISyntaxException;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import org.amaze.ArdorTest.DataObjects.BaseData;
 import org.amaze.ArdorTest.Utilities.InputUtils;
 import org.ancora.SharedLibrary.LoggingUtils;
@@ -58,6 +59,17 @@ public abstract class BaseUpdater implements Updater {
    public void init() {
       final ContextCapabilities caps = ContextManager.getCurrentContext().getCapabilities();
       Logger logger = LoggingUtils.getLogger(this);
+      String testString = caps.getDisplayVendor().toLowerCase();
+      if(testString.startsWith("intel") ||
+                    testString.startsWith("s3")) {
+         String message = "Graphic Card not supported:"+caps.getDisplayRenderer();
+         LoggingUtils.getLogger().
+                 warning(message);
+         JOptionPane.showMessageDialog(null, message);
+         System.exit(1);
+      }
+
+
       logger.info("Display Vendor: " + caps.getDisplayVendor());
       logger.info("Display Renderer: " + caps.getDisplayRenderer());
       logger.info("Display Version: " + caps.getDisplayVersion());
@@ -69,6 +81,8 @@ public abstract class BaseUpdater implements Updater {
 //              baseData.basicInput.logicalLayer, InputUtils._worldUp, true);
 
 //      System.out.println("Input Aft:"+baseData.basicInput.firstPersonControl);
+
+//              baseData.screenData.nativeCanvas.init();
 
       registerInputs();
 
@@ -122,10 +136,12 @@ public abstract class BaseUpdater implements Updater {
          Node _root = baseData.screenData._root;
         _root.getSceneHints().setRenderBucketType(RenderBucketType.Opaque);
 
+
         initExample();
 
         _root.updateGeometricState(0);
-  
+              //System.out.println("Height:"+baseData.screenData.nativeCanvas.getCanvasRenderer().getCamera().getHeight());
+              //System.out.println("Width:"+baseData.screenData.nativeCanvas.getCanvasRenderer().getCamera().getWidth());
    }
 
    /**

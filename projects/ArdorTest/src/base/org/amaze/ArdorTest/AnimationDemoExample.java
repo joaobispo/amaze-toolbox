@@ -82,6 +82,7 @@ import com.ardor3d.util.TextureManager;
 import com.ardor3d.util.resource.ResourceLocatorTool;
 import com.ardor3d.util.resource.ResourceSource;
 import com.ardor3d.util.resource.URLResourceSource;
+import org.amaze.ArdorTests.Test2.JInputGamepad;
 
 /**
  * Illustrates loading several animations from Collada and arranging them in an animation state machine.
@@ -108,6 +109,8 @@ public class AnimationDemoExample extends ExampleBase {
     private OutputStore layerOutput;
     private Cylinder staff;
 
+    private JInputGamepad jinputGamepad;
+
     public static void main(final String[] args) {
         ExampleBase.start(AnimationDemoExample.class);
     }
@@ -133,6 +136,8 @@ public class AnimationDemoExample extends ExampleBase {
 
         // Create our options frame and fps label
         createHUD();
+
+        jinputGamepad = JInputGamepad.firstGamepadFound();
     }
 
     private void createHUD() {
@@ -540,6 +545,9 @@ public class AnimationDemoExample extends ExampleBase {
         frames++;
 
         manager.update();
+
+//        System.out.println("Direct Jinput:"+jinputGamepad.getAnalogs().get(0).getPollData());
+
     }
 
     @Override

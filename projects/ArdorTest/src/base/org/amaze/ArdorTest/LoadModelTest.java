@@ -27,6 +27,7 @@ import com.ardor3d.input.logical.TriggerAction;
 import com.ardor3d.input.logical.TwoInputStates;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import javax.swing.JOptionPane;
 import org.amaze.ArdorTest.BaseImplementations.BaseScene;
 import org.amaze.ArdorTest.DataObjects.BaseData;
 import org.amaze.ArdorTest.BaseImplementations.BaseRunner;
@@ -37,6 +38,8 @@ import org.amaze.ArdorTest.Utilities.SettingsUtils;
 import org.amaze.ArdorTests.Test1.Test1Updater;
 import org.amaze.ArdorTests.Test2.Test2Updater;
 import org.ancora.SharedLibrary.LoggingUtils;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.OpenGLException;
 
 /**
  *
@@ -53,8 +56,25 @@ public class LoadModelTest  {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+      // try {
       LoadModelTest modelTest = new LoadModelTest();
-      modelTest.execute();
+      modelTest.execute(); //}
+    /*
+    catch(OpenGLException ex) {
+          StringBuilder message = new StringBuilder();
+          message.append("Found an OpenGL Exception. Make sure your graphic card ");
+          message.append("supports OpenGL and that you have the latest drivers.");
+          message.append("\n");
+          message.append("\n");
+          message.append("Exception:");
+          message.append(ex.getMessage());
+          JOptionPane.showMessageDialog(null, message.toString());
+         System.exit(1);
+       } finally {
+          System.out.println("GLError:"+GL11.glGetError());
+       }
+     * 
+     */
     }
 
    private void execute() {

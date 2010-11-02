@@ -57,7 +57,11 @@ import net.java.games.input.Controller.Type;
 import net.java.games.input.ControllerEnvironment;
 import org.amaze.ArdorTest.BaseImplementations.BaseUpdater;
 import org.amaze.ArdorTest.DataObjects.BaseData;
-import org.amaze.ArdorTest.Input.Gamepad;
+import org.amaze.ArdorTest.Input.FightingPad;
+import org.amaze.ArdorTest.Input.FightingPad2;
+import org.amaze.ArdorTest.Input.FightingPad2.Action;
+import org.amaze.ArdorTest.Input.GamepadInput;
+import org.amaze.ArdorTest.Input.GamepadOnlyButtons;
 
 /**
  *
@@ -78,8 +82,12 @@ public class Test2Updater extends BaseUpdater {
    @Override
    protected void updateExample(ReadOnlyTimer timer) {
       gamepad.updateFrameCount();
+//      fightpad.updateFrameCount();
+System.out.println(onlyButtons.getButtons())
+        ;
       //System.out.println("Frames:"+baseData.screenData.timer.getFrameRate());
-      
+//System.out.println("Direct Jinput:"+jinputGamepad.getAnalogs().get(0).getPollData());
+//System.out.println("Direct Jinput:"+jinputGamepad.getButtons().get(0).getPollData());
       //Component component = gamepad.getFaceButtons().getDirection(Dpad.Direction.UP);
       //if(component.getPollData() > 0.0f) {
       //   System.out.println("Up Button:"+component.getPollData());
@@ -97,7 +105,8 @@ public class Test2Updater extends BaseUpdater {
 
       // Change angle according to controller
       //float sensitivity = 0.2f;
-      
+      //float xPolled = 0.0f;
+      //float yPolled = 0.0f;
       float xPolled = gamepad.getAnalogs().get(xAxisIndex).getValueProcessed();
       float yPolled = gamepad.getAnalogs().get(yAxisIndex).getValueProcessed();
 
@@ -116,6 +125,9 @@ public class Test2Updater extends BaseUpdater {
       if(gamepad.getButtons().get(2).isCurrentlyPressed()) {
          currentVelocity *= 2.0d;
       }
+
+//            System.out.println("y polled:"+xPolled);
+//      System.out.println("x polled:"+yPolled);
 
       double xChange = xPolled * currentVelocity;
       double yChange = yPolled * currentVelocity;
@@ -172,19 +184,38 @@ public class Test2Updater extends BaseUpdater {
          yAngle = yAngle % Math.PI;
       }
 
-if(gamepad.getButtonPressings().size() > 0) {
+      
+      if (gamepad.getButtonPressings().size() > 0) {
 //      if (actions.size() > 0) {
 //         actions.remove(0);
-   Integer buttonId = gamepad.getButtonPressings().get(0);
-         System.out.println("Button:"+buttonId);
+         Integer buttonId = gamepad.getButtonPressings().get(0);
+         System.out.println("Button:" + buttonId);
          gamepad.getButtonPressings().remove(0);
 
-         if(buttonId != 2) {
-         yAngle = 0.0d;
-         xAngle = 0.0d;
-   }
+         if (buttonId != 2) {
+            yAngle = 0.0d;
+            xAngle = 0.0d;
+         }
 
       }
+
+
+      /*
+      if (fightpad.getButtonPresses().size() > 0) {
+//      if (actions.size() > 0) {
+//         actions.remove(0);
+         Action buttonId = fightpad.getButtonPresses().get(0);
+         System.out.println("Button:" + buttonId);
+         fightpad.getButtonPresses().remove(buttonId);
+
+         if (buttonId != Action.DOWN) {
+            yAngle = 0.0d;
+            xAngle = 0.0d;
+         }
+
+      }
+       *
+       */
 
 
       int frames = 120;
@@ -344,8 +375,11 @@ if(gamepad.getButtonPressings().size() > 0) {
 
    AnimationManager manager;
 
+   GamepadOnlyButtons onlyButtons;
+   //private FightingPad fightpad;
+   private FightingPad2 fightpad;
    private JInputGamepad jinputGamepad;
-   private Gamepad gamepad;
+   private GamepadInput gamepad;
    private double xAngle;
    private double yAngle;
    private int xAxisIndex = 1;
@@ -413,141 +447,14 @@ if(gamepad.getButtonPressings().size() > 0) {
       //xAxis = jinputGamepad.getxAxis();
 
       gamepad = JInputGamepad.newGamepad(jinputGamepad, baseData.basicInput.logicalLayer);
+ onlyButtons =      GamepadOnlyButtons.newGamepad(jinputGamepad, baseData.basicInput.logicalLayer);
       //setupController(gamepad);
 
+      //fightpad = FightingPad.newFightPad(JInputGamepad.newGamepad(jinputGamepad, baseData.basicInput.logicalLayer), baseData.basicInput.logicalLayer);
+      //fightpad = new FightingPad2(gamepad);
+
    }
 
-  /*
-   private void setupController(final JInputGamepad gamepad) {
-      LogicalLayer logicalLayer = baseData.basicInput.logicalLayer;
 
-      final Predicate<TwoInputStates> keyPressed = new Predicate<TwoInputStates>() {
-         //List<Component> faceButtons = gamepad.getFaceButtons().getDirections();
-         Component upButton = gamepad.getFaceButtons().getDirection(Dpad.Direction.UP);
-  //       Key[] keys = new Key[] { Key.W, Key.A, Key.S, Key.D, Key.LEFT, Key.RIGHT, Key.UP, Key.DOWN };
-
-         @Override
-            public boolean apply(final TwoInputStates states) {
-                    if (upButton.getPollData() == 1.0 && !isButtonDirty) {
-                       isButtonDirty = true;
-                       return true;
-                    }
-
-                return false;
-            }
-        };
-
-      final Predicate<TwoInputStates> keysHeld = new Predicate<TwoInputStates>() {
-         List<Component> faceButtons = gamepad.getFaceButtons().getDirections();
-  //       Key[] keys = new Key[] { Key.W, Key.A, Key.S, Key.D, Key.LEFT, Key.RIGHT, Key.UP, Key.DOWN };
-
-         @Override
-            public boolean apply(final TwoInputStates states) {
-                for (final Component k : faceButtons) {
-                    if (states.getCurrent() != null && k.getPollData() > 0.0) {
-                       return true;
-                    }
-                }
-                return false;
-            }
-        };
-
-          final TriggerAction buttonAction = new TriggerAction() {
-         //public void perform(final Canvas source, final TwoInputStates inputStates, final double tpf) {
-
-         @Override
-         public void perform(Canvas source, TwoInputStates inputState, double tpf) {
-            //colladaNode.setRotation(new Matrix3());
-            //System.out.println("AHHHHH");
-            //buttonActive = true;
-  /*
-            if(!isButtonDirty) {
-               isButtonDirty = true;
-               buttonActive = true;
-               System.out.println("Button pressed");
-            }
-   *
-   */
-   /*
-            actions.add(0);
-            System.out.println("Button Pressed");
-         }
-      };
-
-              logicalLayer.registerTrigger(new InputTrigger(keyPressed, buttonAction));
-
-      final Predicate<TwoInputStates> keyReleased = new Predicate<TwoInputStates>() {
-         Component upButton = gamepad.getFaceButtons().getDirection(Dpad.Direction.UP);
-  //       Key[] keys = new Key[] { Key.W, Key.A, Key.S, Key.D, Key.LEFT, Key.RIGHT, Key.UP, Key.DOWN };
-
-         @Override
-            public boolean apply(final TwoInputStates states) {
-//                for (final Component k : faceButtons) {
-                    if (upButton.getPollData() == 0.0f && isButtonDirty) {
-                       isButtonDirty = false;
-                       return true;
-                    }
-  //              }
-                return false;
-            }
-
-        };
-
-      final Predicate<TwoInputStates> keysReleased = new Predicate<TwoInputStates>() {
-         List<Component> faceButtons = gamepad.getFaceButtons().getDirections();
-  //       Key[] keys = new Key[] { Key.W, Key.A, Key.S, Key.D, Key.LEFT, Key.RIGHT, Key.UP, Key.DOWN };
-
-         @Override
-            public boolean apply(final TwoInputStates states) {
-                for (final Component k : faceButtons) {
-                    if (states.getCurrent() != null && k.getPollData() == 0.0f) {
-                       return true;
-                    }
-                }
-                return false;
-            }
-
-        };
-
-          final TriggerAction buttonRelease = new TriggerAction() {
-         //public void perform(final Canvas source, final TwoInputStates inputStates, final double tpf) {
-
-         @Override
-         public void perform(Canvas source, TwoInputStates inputState, double tpf) {
-  System.out.println("Button Release");
-
-            /*
-            //buttonActive = false;
-            //isButtonDirty = false;
-            if(isButtonDirty) {
-               buttonActive = false;
-               isButtonDirty = false;
-               System.out.println("Button Release");
-            }
-*/
-/*
-}
-
-      };
-
-
-        logicalLayer.registerTrigger(new InputTrigger(keyReleased, buttonRelease));
-   }
-*/
-   //private boolean buttonActive;
-   //private boolean isButtonDirty;
-   //List<Integer> actions = new ArrayList<Integer>();
-
-   /*
-   private void setupController(Controller gamepad) {
-      LogicalLayer logicalLayer = baseData.basicInput.logicalLayer;
-
-      xAngle += 0.001;
-      if(xAngle > 2*Math.PI) {
-         xAngle = xAngle % Math.PI;
-      }
-   }
-    *
-    */
 
 }

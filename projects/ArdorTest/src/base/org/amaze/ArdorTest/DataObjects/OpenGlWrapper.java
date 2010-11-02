@@ -34,6 +34,8 @@ import com.ardor3d.input.lwjgl.LwjglControllerWrapper;
 import com.ardor3d.input.lwjgl.LwjglKeyboardWrapper;
 import com.ardor3d.input.lwjgl.LwjglMouseManager;
 import com.ardor3d.input.lwjgl.LwjglMouseWrapper;
+import com.ardor3d.renderer.ContextCapabilities;
+import com.ardor3d.renderer.ContextManager;
 import com.ardor3d.renderer.TextureRendererFactory;
 import com.ardor3d.renderer.jogl.JoglTextureRendererProvider;
 import com.ardor3d.renderer.lwjgl.LwjglTextureRendererProvider;
@@ -81,7 +83,6 @@ public class OpenGlWrapper {
       }
 
 
-
       NativeCanvas nativeCanvas;
       MouseManager mouseManager;
       PhysicalLayer physicalLayer;
@@ -111,12 +112,16 @@ public class OpenGlWrapper {
       PhysicalLayer physicalLayer;
 
       final JoglCanvasRenderer canvasRenderer = new JoglCanvasRenderer(scene);
+      //System.out.println("Jogl Height:"+displaySettings.getHeight());
+      //System.out.println("Jogl Width:"+displaySettings.getWidth());
       nativeCanvas = new JoglCanvas(canvasRenderer, displaySettings);
       final JoglCanvas canvas = (JoglCanvas) nativeCanvas;
       mouseManager = new AwtMouseManager(canvas);
       physicalLayer = new PhysicalLayer(new AwtKeyboardWrapper(canvas), new AwtMouseWrapper(canvas,
               mouseManager), DummyControllerWrapper.INSTANCE, new AwtFocusWrapper(canvas));
       textureRenderer.setProvider(new JoglTextureRendererProvider());
+
+
 
       return new OpenGlWrapper(nativeCanvas, mouseManager, physicalLayer);
    }

@@ -27,13 +27,13 @@ import org.ancora.SharedLibrary.LoggingUtils;
  *
  * @author Joao Bispo
  */
-public class Gamepad {
+public class GamepadInput {
 
-   public Gamepad() {
+   public GamepadInput() {
       buttons = new ArrayList<Button>();
       analogs = new ArrayList<Analog>();
       buttonPressings = new ArrayList<Integer>();
-      //buttonReleases = new ArrayList<Integer>();
+      buttonReleases = new ArrayList<Integer>();
 
       pressedFrames = new ArrayList<Integer>();
       pressedButtons = new HashSet<Integer>();
@@ -87,7 +87,7 @@ public class Gamepad {
 
       // Pressed frames goes to zero
       pressedFrames.set(index, 0);
-      //buttonReleases.add(index);
+      buttonReleases.add(index);
       pressedButtons.remove(index);
    }
 
@@ -102,13 +102,13 @@ public class Gamepad {
       //System.out.println("After:"+pressedFrames);
    }
 
-   private List<Button> buttons;
-   private List<Integer> pressedFrames;
-   private List<Analog> analogs;
+   protected List<Button> buttons;
+   protected List<Integer> pressedFrames;
+   protected List<Analog> analogs;
 
-   private List<Integer> buttonPressings;
-   //private List<Integer> buttonReleases;
-   private Set<Integer> pressedButtons;
+   protected List<Integer> buttonPressings;
+   protected List<Integer> buttonReleases;
+   protected Set<Integer> pressedButtons;
 
    public void addButton(Button newButton) {
       buttons.add(newButton);
@@ -118,5 +118,11 @@ public class Gamepad {
    public void addAnalog(Analog newAnalog) {
       analogs.add(newAnalog);
    }
+
+   public List<Integer> getButtonReleases() {
+      return buttonReleases;
+   }
+
+   
 
 }
